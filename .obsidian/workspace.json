@@ -4,11 +4,35 @@
     "type": "split",
     "children": [
       {
-        "id": "66867da5dc00aee8",
+        "id": "0f25056309e231a2",
         "type": "tabs",
         "children": [
           {
-            "id": "01927b85ca89f00a",
+            "id": "853620d3ca5dc925",
+            "type": "leaf",
+            "state": {
+              "type": "excalidraw",
+              "state": {
+                "file": "1- DesignPattern.md"
+              },
+              "icon": "excalidraw-icon",
+              "title": "1- DesignPattern"
+            }
+          },
+          {
+            "id": "9bbe3549cff22e63",
+            "type": "leaf",
+            "state": {
+              "type": "excalidraw",
+              "state": {
+                "file": "0000- HOW TO RUN THE SUMMARY.md"
+              },
+              "icon": "excalidraw-icon",
+              "title": "0000- HOW TO RUN THE SUMMARY"
+            }
+          },
+          {
+            "id": "146062e356fd5c65",
             "type": "leaf",
             "state": {
               "type": "excalidraw",
@@ -19,7 +43,8 @@
               "title": "0000- HOW TO RUN THE SUMMARY"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -165,26 +190,33 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "01927b85ca89f00a",
+  "active": "146062e356fd5c65",
   "lastOpenFiles": [
-    "Readme.md",
     "000- xv6- workflow.md",
-    "2- Algo.md",
-    "IMAGES (USED IN SUMMARY)/HOW TO RUN THE SUMMARY OBSIDIAN.svg",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20251023130326_638.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260117003420_126.png",
-    "0000- HOW TO RUN THE SUMMARY.md",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260117004132_921.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260117004059_118.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260117004009_389.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260117003750_155.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260117003625_265.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260117003943_458.png",
-    "1- DesignPattern.md",
-    "Untitled.md",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260117002000_067.png",
-    "4- OS.md",
+    "IMAGES (ENG)/Pasted Image 20260304232115_399.png",
     "5- DB.md",
+    "English revision (prep. exam)/000 - prep eng.md",
+    "IMAGES (ENG)/Pasted Image 20260305011018_930.png",
+    "IMAGES (ENG)/Pasted Image 20260305010730_631.png",
+    "IMAGES (ENG)/Pasted Image 20260305010712_792.png",
+    "IMAGES (ENG)/Pasted Image 20260305010646_438.png",
+    "IMAGES (ENG)/Pasted Image 20260305010616_851.png",
+    "IMAGES (ENG)/Pasted Image 20260305010600_601.png",
+    "IMAGES (ENG)/Pasted Image 20260305005514_269.png",
+    "IMAGES (ENG)/Pasted Image 20260305005431_201.png",
+    "IMAGES (ENG)",
+    "IMAGES (ENG)/Pasted Image 20260305005144_220.png",
+    "0000- HOW TO RUN THE SUMMARY.md",
+    "Excalidraw",
+    "English revision (prep. exam)",
+    "4- OS.md",
+    "3 - Data SCi..md",
+    "1- DesignPattern.md",
+    "MyPrivates/Untitled.md",
+    "MyPrivates",
+    "Readme.md",
+    "2- Algo.md",
+    "Untitled.md",
     "Untitled 1.canvas",
     "Untitled.canvas",
     "IMAGES (USED IN SUMMARY)",
@@ -196,7 +228,6 @@
     "Drawing 2026-01-07 22.14.21.excalidraw.md",
     "Drawing 2026-01-07 15.44.54.excalidraw.md",
     "Drawing 2026-01-04 18.58.17.excalidraw.md",
-    "3 - Data SCi..md",
     "db continue.md",
     "2026-01-07.md"
   ]
