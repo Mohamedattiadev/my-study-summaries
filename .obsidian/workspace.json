@@ -8,43 +8,18 @@
         "type": "tabs",
         "children": [
           {
-            "id": "853620d3ca5dc925",
+            "id": "8d5d2ce4a4106cf0",
             "type": "leaf",
             "state": {
               "type": "excalidraw",
               "state": {
-                "file": "1- DesignPattern.md"
+                "file": "English revision (prep. exam)/000 - prep eng.md"
               },
               "icon": "excalidraw-icon",
-              "title": "1- DesignPattern"
-            }
-          },
-          {
-            "id": "9bbe3549cff22e63",
-            "type": "leaf",
-            "state": {
-              "type": "excalidraw",
-              "state": {
-                "file": "0000- HOW TO RUN THE SUMMARY.md"
-              },
-              "icon": "excalidraw-icon",
-              "title": "0000- HOW TO RUN THE SUMMARY"
-            }
-          },
-          {
-            "id": "146062e356fd5c65",
-            "type": "leaf",
-            "state": {
-              "type": "excalidraw",
-              "state": {
-                "file": "0000- HOW TO RUN THE SUMMARY.md"
-              },
-              "icon": "excalidraw-icon",
-              "title": "0000- HOW TO RUN THE SUMMARY"
+              "title": "000 - prep eng"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -190,33 +165,35 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "146062e356fd5c65",
+  "active": "8d5d2ce4a4106cf0",
   "lastOpenFiles": [
-    "000- xv6- workflow.md",
-    "IMAGES (ENG)/Pasted Image 20260304232115_399.png",
-    "5- DB.md",
+    "IMAGES (ENG)/Pasted Image 20260315153944_453.png",
     "English revision (prep. exam)/000 - prep eng.md",
-    "IMAGES (ENG)/Pasted Image 20260305011018_930.png",
-    "IMAGES (ENG)/Pasted Image 20260305010730_631.png",
-    "IMAGES (ENG)/Pasted Image 20260305010712_792.png",
-    "IMAGES (ENG)/Pasted Image 20260305010646_438.png",
-    "IMAGES (ENG)/Pasted Image 20260305010616_851.png",
-    "IMAGES (ENG)/Pasted Image 20260305010600_601.png",
-    "IMAGES (ENG)/Pasted Image 20260305005514_269.png",
-    "IMAGES (ENG)/Pasted Image 20260305005431_201.png",
-    "IMAGES (ENG)",
-    "IMAGES (ENG)/Pasted Image 20260305005144_220.png",
+    "IMAGES (ENG)/Pasted Image 20260315182052_586.png",
+    "IMAGES (ENG)/Pasted Image 20260315181823_200.png",
+    "IMAGES (ENG)/Pasted Image 20260315181226_851.png",
+    "IMAGES (ENG)/Pasted Image 20260315180337_231.png",
+    "IMAGES (ENG)/Pasted Image 20260315180317_214.png",
+    "IMAGES (ENG)/Pasted Image 20260315180258_519.png",
+    "IMAGES (ENG)/Pasted Image 20260315180238_919.png",
+    "IMAGES (ENG)/Pasted Image 20260315180215_776.png",
+    "IMAGES (ENG)/Pasted Image 20260315180155_896.png",
+    "IMAGES (ENG)/Pasted Image 20260315180129_552.png",
     "0000- HOW TO RUN THE SUMMARY.md",
+    "6 - Computer Networking.md",
+    "1- DesignPattern.md",
     "Excalidraw",
+    "Untitled.md",
+    "000- xv6- workflow.md",
+    "5- DB.md",
+    "IMAGES (ENG)",
     "English revision (prep. exam)",
     "4- OS.md",
     "3 - Data SCi..md",
-    "1- DesignPattern.md",
     "MyPrivates/Untitled.md",
     "MyPrivates",
     "Readme.md",
     "2- Algo.md",
-    "Untitled.md",
     "Untitled 1.canvas",
     "Untitled.canvas",
     "IMAGES (USED IN SUMMARY)",
