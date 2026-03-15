@@ -145,12 +145,23 @@
               "icon": "lucide-list",
               "title": "Outline"
             }
+          },
+          {
+            "id": "b2d320ad7aa6bc49",
+            "type": "leaf",
+            "state": {
+              "type": "excalidraw-sidepanel",
+              "state": {},
+              "icon": "excalidraw-icon",
+              "title": "Excalidraw Sidepanel"
+            }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
-    "width": 300,
+    "width": 299.5,
     "collapsed": true
   },
   "left-ribbon": {
@@ -167,22 +178,27 @@
   },
   "active": "8d5d2ce4a4106cf0",
   "lastOpenFiles": [
-    "IMAGES (ENG)/Pasted Image 20260315153944_453.png",
     "English revision (prep. exam)/000 - prep eng.md",
+    "Excalidraw/Scripts/Downloaded/Zoom to Fit Selected Elements.svg",
+    "Excalidraw/Scripts/Downloaded/Zoom to Fit Selected Elements.md",
+    "Excalidraw/Scripts/Downloaded/Split Ellipse.md",
+    "Excalidraw/Scripts/Downloaded/Shade Master.svg",
+    "Excalidraw/Scripts/Downloaded/Shade Master.md",
+    "Excalidraw/Scripts/Downloaded/Slideshow.svg",
+    "Excalidraw/Scripts/Downloaded/Slideshow.md",
+    "Excalidraw/Scripts/Downloaded/Split Ellipse.svg",
+    "Excalidraw/Scripts/Downloaded",
+    "Excalidraw/Scripts",
+    "Excalidraw",
+    "IMAGES (ENG)/Pasted Image 20260315153944_453.png",
     "IMAGES (ENG)/Pasted Image 20260315182052_586.png",
     "IMAGES (ENG)/Pasted Image 20260315181823_200.png",
     "IMAGES (ENG)/Pasted Image 20260315181226_851.png",
     "IMAGES (ENG)/Pasted Image 20260315180337_231.png",
     "IMAGES (ENG)/Pasted Image 20260315180317_214.png",
-    "IMAGES (ENG)/Pasted Image 20260315180258_519.png",
-    "IMAGES (ENG)/Pasted Image 20260315180238_919.png",
-    "IMAGES (ENG)/Pasted Image 20260315180215_776.png",
-    "IMAGES (ENG)/Pasted Image 20260315180155_896.png",
-    "IMAGES (ENG)/Pasted Image 20260315180129_552.png",
     "0000- HOW TO RUN THE SUMMARY.md",
     "6 - Computer Networking.md",
     "1- DesignPattern.md",
-    "Excalidraw",
     "Untitled.md",
     "000- xv6- workflow.md",
     "5- DB.md",
@@ -205,7 +221,6 @@
     "Drawing 2026-01-07 22.14.21.excalidraw.md",
     "Drawing 2026-01-07 15.44.54.excalidraw.md",
     "Drawing 2026-01-04 18.58.17.excalidraw.md",
-    "db continue.md",
-    "2026-01-07.md"
+    "db continue.md"
   ]
 }

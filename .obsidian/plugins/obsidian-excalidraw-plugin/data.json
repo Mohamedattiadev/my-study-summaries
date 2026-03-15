@@ -122,7 +122,25 @@
   "mdFontColor": "Black",
   "mdBorderColor": "Black",
   "mdCSS": "",
-  "scriptEngineSettings": {},
+  "scriptEngineSettings": {
+    "Downloaded/Shade Master": {
+      "Color Format": {
+        "value": "HEX",
+        "valueset": [
+          "HSL",
+          "RGB",
+          "HEX"
+        ],
+        "description": "Output color format."
+      },
+      "Modify Stroke Color": {
+        "value": true
+      },
+      "Modify Background Color": {
+        "value": true
+      }
+    }
+  },
   "previousRelease": "2.19.1",
   "showReleaseNotes": true,
   "compareManifestToPluginVersion": true,
@@ -131,7 +149,10 @@
   "latexPreambleLocation": "preamble.sty",
   "taskboneEnabled": false,
   "taskboneAPIkey": "",
-  "pinnedScripts": [],
+  "pinnedScripts": [
+    "Excalidraw/Scripts/Downloaded/Slideshow.md",
+    "Excalidraw/Scripts/Downloaded/Split Ellipse.md"
+  ],
   "sidepanelTabs": [],
   "customPens": [
     {
