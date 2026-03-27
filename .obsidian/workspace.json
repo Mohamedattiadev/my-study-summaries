@@ -11,12 +11,12 @@
             "id": "9767ba4581e2658b",
             "type": "leaf",
             "state": {
-              "type": "pdf",
+              "type": "excalidraw",
               "state": {
-                "file": "Main Arch. notes - Whiteboard_compressed.pdf"
+                "file": "8.2 - Software Architecture - (4-..).md"
               },
-              "icon": "lucide-file-text",
-              "title": "Main Arch. notes - Whiteboard_compressed"
+              "icon": "excalidraw-icon",
+              "title": "8.2 - Software Architecture - (4-..)"
             }
           }
         ]
@@ -176,14 +176,15 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "1c4f6ae54d49b402",
+  "active": "9767ba4581e2658b",
   "lastOpenFiles": [
+    "8.1 - Software Architecture - chp (1-4).goodnotes",
+    "8.1 - Software Architecture - chp (1-4).pdf",
+    "8.2 - Software Architecture - (4-..).md",
     "Main Arch. notes - Whiteboard.goodnotes.zip",
     "zipyHn53",
     "Unconfirmed 949409.crdownload",
     "Excalidraw/Main Arch. notes - Whiteboard.pdf",
-    "Main Arch. notes - Whiteboard_compressed.pdf",
-    "8 - Software Architecture.md",
     "Main Arch. notes - Whiteboard.goodnotes",
     "6 - Computer Networking.md",
     "7- Data Mining.md",
@@ -211,7 +212,6 @@
     "000- xv6- workflow.md",
     "5- DB.md",
     "IMAGES (ENG)",
-    "English revision (prep. exam)",
     "4- OS.md",
     "3 - Data SCi..md",
     "MyPrivates/Untitled.md",
