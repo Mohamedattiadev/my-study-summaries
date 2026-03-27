@@ -4,19 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "0f25056309e231a2",
+        "id": "3c3c8477aa7ad694",
         "type": "tabs",
         "children": [
           {
-            "id": "8d5d2ce4a4106cf0",
+            "id": "9767ba4581e2658b",
             "type": "leaf",
             "state": {
-              "type": "excalidraw",
+              "type": "pdf",
               "state": {
-                "file": "English revision (prep. exam)/000 - prep eng.md"
+                "file": "Main Arch. notes - Whiteboard.pdf"
               },
-              "icon": "excalidraw-icon",
-              "title": "000 - prep eng"
+              "icon": "lucide-file-text",
+              "title": "Main Arch. notes - Whiteboard"
             }
           }
         ]
@@ -176,28 +176,32 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "8d5d2ce4a4106cf0",
+  "active": "9767ba4581e2658b",
   "lastOpenFiles": [
+    "8 - Software Architecture.md",
+    "Main Arch. notes - Whiteboard.pdf",
+    "Main Arch. notes - Whiteboard.goodnotes",
+    "6 - Computer Networking.md",
+    "7- Data Mining.md",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260326215336_082.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327232345_745.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327232326_650.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327232300_487.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327232203_771.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327232044_648.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327232018_669.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327232004_390.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327231918_522.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327231904_468.png",
     "English revision (prep. exam)/000 - prep eng.md",
-    "Excalidraw/Scripts/Downloaded/Zoom to Fit Selected Elements.svg",
     "Excalidraw/Scripts/Downloaded/Zoom to Fit Selected Elements.md",
     "Excalidraw/Scripts/Downloaded/Split Ellipse.md",
-    "Excalidraw/Scripts/Downloaded/Shade Master.svg",
     "Excalidraw/Scripts/Downloaded/Shade Master.md",
-    "Excalidraw/Scripts/Downloaded/Slideshow.svg",
     "Excalidraw/Scripts/Downloaded/Slideshow.md",
-    "Excalidraw/Scripts/Downloaded/Split Ellipse.svg",
     "Excalidraw/Scripts/Downloaded",
     "Excalidraw/Scripts",
     "Excalidraw",
-    "IMAGES (ENG)/Pasted Image 20260315153944_453.png",
-    "IMAGES (ENG)/Pasted Image 20260315182052_586.png",
-    "IMAGES (ENG)/Pasted Image 20260315181823_200.png",
-    "IMAGES (ENG)/Pasted Image 20260315181226_851.png",
-    "IMAGES (ENG)/Pasted Image 20260315180337_231.png",
-    "IMAGES (ENG)/Pasted Image 20260315180317_214.png",
     "0000- HOW TO RUN THE SUMMARY.md",
-    "6 - Computer Networking.md",
     "1- DesignPattern.md",
     "Untitled.md",
     "000- xv6- workflow.md",
@@ -219,8 +223,6 @@
     "Drawing 2026-01-10 16.09.27.excalidraw.md",
     "Drawing 2026-01-10 15.02.04.excalidraw.md",
     "Drawing 2026-01-07 22.14.21.excalidraw.md",
-    "Drawing 2026-01-07 15.44.54.excalidraw.md",
-    "Drawing 2026-01-04 18.58.17.excalidraw.md",
-    "db continue.md"
+    "Drawing 2026-01-07 15.44.54.excalidraw.md"
   ]
 }
