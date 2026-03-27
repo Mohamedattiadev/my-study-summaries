@@ -13,10 +13,10 @@
             "state": {
               "type": "pdf",
               "state": {
-                "file": "Main Arch. notes - Whiteboard.pdf"
+                "file": "Main Arch. notes - Whiteboard_compressed.pdf"
               },
               "icon": "lucide-file-text",
-              "title": "Main Arch. notes - Whiteboard"
+              "title": "Main Arch. notes - Whiteboard_compressed"
             }
           }
         ]
@@ -176,10 +176,14 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "9767ba4581e2658b",
+  "active": "1c4f6ae54d49b402",
   "lastOpenFiles": [
+    "Main Arch. notes - Whiteboard.goodnotes.zip",
+    "zipyHn53",
+    "Unconfirmed 949409.crdownload",
+    "Excalidraw/Main Arch. notes - Whiteboard.pdf",
+    "Main Arch. notes - Whiteboard_compressed.pdf",
     "8 - Software Architecture.md",
-    "Main Arch. notes - Whiteboard.pdf",
     "Main Arch. notes - Whiteboard.goodnotes",
     "6 - Computer Networking.md",
     "7- Data Mining.md",
@@ -211,12 +215,10 @@
     "4- OS.md",
     "3 - Data SCi..md",
     "MyPrivates/Untitled.md",
-    "MyPrivates",
     "Readme.md",
     "2- Algo.md",
     "Untitled 1.canvas",
     "Untitled.canvas",
-    "IMAGES (USED IN SUMMARY)",
     "Drawing 2026-01-16 23.00.15.excalidraw.md",
     "Drawing 2026-01-13 20.57.44.excalidraw.md",
     "Drawing 2026-01-10 16.12.58.excalidraw.md",
