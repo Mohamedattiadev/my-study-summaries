@@ -4,19 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "3c3c8477aa7ad694",
+        "id": "548d319861deb75f",
         "type": "tabs",
         "children": [
           {
-            "id": "9767ba4581e2658b",
+            "id": "026165445f9861b6",
             "type": "leaf",
             "state": {
-              "type": "excalidraw",
-              "state": {
-                "file": "8.2 - Software Architecture - (4-..).md"
-              },
-              "icon": "excalidraw-icon",
-              "title": "8.2 - Software Architecture - (4-..)"
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
             }
           }
         ]
@@ -176,28 +174,28 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "9767ba4581e2658b",
+  "active": "1c4f6ae54d49b402",
   "lastOpenFiles": [
+    "8.2 - Software Architecture - (5-..).md",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329033044_312.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329030129_329.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329030010_349.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329025956_746.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329025924_240.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329025911_535.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329025856_741.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329025832_463.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329025815_228.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329025607_725.png",
+    "6 - Computer Networking.md",
     "8.1 - Software Architecture - chp (1-4).goodnotes",
     "8.1 - Software Architecture - chp (1-4).pdf",
-    "8.2 - Software Architecture - (4-..).md",
     "Main Arch. notes - Whiteboard.goodnotes.zip",
     "zipyHn53",
     "Unconfirmed 949409.crdownload",
     "Excalidraw/Main Arch. notes - Whiteboard.pdf",
     "Main Arch. notes - Whiteboard.goodnotes",
-    "6 - Computer Networking.md",
     "7- Data Mining.md",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260326215336_082.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327232345_745.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327232326_650.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327232300_487.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327232203_771.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327232044_648.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327232018_669.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327232004_390.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327231918_522.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260327231904_468.png",
     "English revision (prep. exam)/000 - prep eng.md",
     "Excalidraw/Scripts/Downloaded/Zoom to Fit Selected Elements.md",
     "Excalidraw/Scripts/Downloaded/Split Ellipse.md",
@@ -211,7 +209,6 @@
     "Untitled.md",
     "000- xv6- workflow.md",
     "5- DB.md",
-    "IMAGES (ENG)",
     "4- OS.md",
     "3 - Data SCi..md",
     "MyPrivates/Untitled.md",
