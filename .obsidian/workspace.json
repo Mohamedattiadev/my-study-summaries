@@ -11,10 +11,12 @@
             "id": "026165445f9861b6",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
-              "icon": "lucide-file",
-              "title": "New tab"
+              "type": "pdf",
+              "state": {
+                "file": "8.1 - Software Architecture - chp (1-4)-High quality.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "8.1 - Software Architecture - chp (1-4)-High quality"
             }
           }
         ]
@@ -176,27 +178,30 @@
   },
   "active": "1c4f6ae54d49b402",
   "lastOpenFiles": [
+    "8.1 - Software Architecture - chp (1-4)-Mid quality.pdf",
+    "8.1 - Software Architecture - chp (1-4)-High quality.pdf",
+    "English revision (prep. exam)/000 - prep eng.md",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329130107_163.png",
+    "9- Scientific Computing.md",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260401010203_848.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260401005453_510.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260401005357_928.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260401001644_600.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260401001421_695.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260401001407_131.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260401001325_804.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260331230144_315.png",
+    "IMAGES (USED IN SUMMARY)/Pasted Image 20260331230000_672.png",
+    "3 - Data SCi..md",
     "8.2 - Software Architecture - (5-..).md",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329033044_312.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329030129_329.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329030010_349.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329025956_746.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329025924_240.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329025911_535.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329025856_741.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329025832_463.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329025815_228.png",
-    "IMAGES (USED IN SUMMARY)/Pasted Image 20260329025607_725.png",
     "6 - Computer Networking.md",
     "8.1 - Software Architecture - chp (1-4).goodnotes",
-    "8.1 - Software Architecture - chp (1-4).pdf",
     "Main Arch. notes - Whiteboard.goodnotes.zip",
     "zipyHn53",
     "Unconfirmed 949409.crdownload",
     "Excalidraw/Main Arch. notes - Whiteboard.pdf",
     "Main Arch. notes - Whiteboard.goodnotes",
     "7- Data Mining.md",
-    "English revision (prep. exam)/000 - prep eng.md",
     "Excalidraw/Scripts/Downloaded/Zoom to Fit Selected Elements.md",
     "Excalidraw/Scripts/Downloaded/Split Ellipse.md",
     "Excalidraw/Scripts/Downloaded/Shade Master.md",
@@ -210,7 +215,6 @@
     "000- xv6- workflow.md",
     "5- DB.md",
     "4- OS.md",
-    "3 - Data SCi..md",
     "MyPrivates/Untitled.md",
     "Readme.md",
     "2- Algo.md",
@@ -221,7 +225,6 @@
     "Drawing 2026-01-10 16.12.58.excalidraw.md",
     "Drawing 2026-01-10 16.09.27.excalidraw.md",
     "Drawing 2026-01-10 15.02.04.excalidraw.md",
-    "Drawing 2026-01-07 22.14.21.excalidraw.md",
-    "Drawing 2026-01-07 15.44.54.excalidraw.md"
+    "Drawing 2026-01-07 22.14.21.excalidraw.md"
   ]
 }
