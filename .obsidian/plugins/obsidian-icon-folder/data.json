@@ -1,0 +1,53 @@
+{
+  "settings": {
+    "migrated": 6,
+    "iconPacksPath": ".obsidian/icons",
+    "fontSize": 16,
+    "emojiStyle": "native",
+    "iconColor": null,
+    "recentlyUsedIcons": [
+      "LiExcalidrawIcon"
+    ],
+    "recentlyUsedIconsSize": 5,
+    "rules": [],
+    "extraMargin": {
+      "top": 0,
+      "right": 4,
+      "bottom": 0,
+      "left": 0
+    },
+    "iconInTabsEnabled": false,
+    "iconInTitleEnabled": false,
+    "iconInTitlePosition": "above",
+    "iconInFrontmatterEnabled": false,
+    "iconInFrontmatterFieldName": "icon",
+    "iconColorInFrontmatterFieldName": "iconColor",
+    "iconsBackgroundCheckEnabled": false,
+    "iconsInNotesEnabled": true,
+    "iconsInLinksEnabled": true,
+    "iconIdentifier": ":",
+    "lucideIconPackType": "native",
+    "debugMode": false,
+    "useInternalPlugins": false
+  },
+  "00-Index": "LiFolderTree",
+  "01-Algorithms": "LiBinary",
+  "02-DesignPatterns": "LiBlocks",
+  "03-OS": "LiCpu",
+  "04-Databases": "LiDatabase",
+  "05-Networking": "LiNetwork",
+  "06-DataScience-Mining": "LiChartScatter",
+  "07-SoftwareArchitecture": "LiBuilding2",
+  "08-ScientificComputing": "LiFlaskConical",
+  "09-Security": "LiShieldCheck",
+  "10-English": "LiLanguages",
+  "90-Assets": "LiImages",
+  "999-Templates": "LiTerminalSquare",
+  "_cache": "LiArchive",
+  "_system": "LiSettings",
+  "9999 - Excalidraw": {
+    "iconName": "LiExcalidrawIcon",
+    "iconColor": "#7c07bb"
+  },
+  "sssss/Excalidraw": "LiPenTool"
+}

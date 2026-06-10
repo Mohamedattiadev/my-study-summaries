@@ -1620,9 +1620,9 @@ f2d20abbcfd7612c9b38f5f7c5300a1ef6e4ab50: [[Pasted Image 20260528192004_058.png]
 
 26d348711bfcf4ffec3bc1b909ce59ef23a09a8c: [[Pasted Image 20260528200232_958.png]]
 
-b3f6737cc6eae6be5bcff836b5c82b7fce5bfa27: [[Pasted Image 20260608022026_565.png]]
+b3f6737cc6eae6be5bcff836b5c82b7fce5bfa27: [[IMAGES (USED IN SUMMARY)/Pasted Image 20260608022026_565.png]]
 
-038b3ff6040bc1c890e08bccbb90c73cde20c790: [[Pasted Image 20260609021303_278.png]]
+038b3ff6040bc1c890e08bccbb90c73cde20c790: [[IMAGES (USED IN SUMMARY)/Pasted Image 20260609021303_278.png]]
 
 %%
 ## Drawing

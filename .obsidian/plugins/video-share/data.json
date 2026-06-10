@@ -1,0 +1,21 @@
+{
+  "autoStart": true,
+  "portMin": 28100,
+  "portMax": 28199,
+  "permanentSecret": "",
+  "defaultSource": "screen",
+  "resolution": "1080p",
+  "bitrateKbps": 2000,
+  "micOn": false,
+  "autoRecord": false,
+  "recordFolder": "Recordings",
+  "recordPattern": "broadcast-{date}-{time}",
+  "allowChat": true,
+  "allowViewerInk": false,
+  "maxViewers": 8,
+  "stopOnLock": false,
+  "publicTunnel": true,
+  "requirePin": true,
+  "pinDigits": 4,
+  "lastKnownIP": "10.2.11.196"
+}

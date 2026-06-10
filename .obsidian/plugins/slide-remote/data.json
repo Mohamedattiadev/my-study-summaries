@@ -1,0 +1,7 @@
+{
+  "autoStart": true,
+  "portMin": 28000,
+  "portMax": 28099,
+  "permanentSecret": "",
+  "lastKnownIP": "10.2.11.196"
+}

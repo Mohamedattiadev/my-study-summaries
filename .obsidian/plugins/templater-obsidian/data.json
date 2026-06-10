@@ -1,0 +1,49 @@
+{
+  "command_timeout": 5,
+  "templates_folder": "9999 - Excalidraw/Scripts/TemplateOfTemplator",
+  "templates_pairs": [
+    [
+      "",
+      ""
+    ]
+  ],
+  "trigger_on_file_creation": false,
+  "auto_jump_to_cursor": false,
+  "enable_system_commands": false,
+  "shell_path": "",
+  "user_scripts_folder": "9999 - Excalidraw/Scripts/TemplateOfTemplator",
+  "enable_folder_templates": true,
+  "folder_templates": [
+    {
+      "folder": "",
+      "template": ""
+    }
+  ],
+  "enable_file_templates": false,
+  "file_templates": [
+    {
+      "regex": ".*",
+      "template": ""
+    }
+  ],
+  "syntax_highlighting": true,
+  "syntax_highlighting_mobile": false,
+  "enabled_templates_hotkeys": [],
+  "startup_templates": [
+    "9999 - Excalidraw/Scripts/TemplateOfTemplator/mask-tap-startup.md",
+    "9999 - Excalidraw/Scripts/TemplateOfTemplator/minimap-startup.md",
+    "9999 - Excalidraw/Scripts/TemplateOfTemplator/ai-edit-startup.md",
+    "9999 - Excalidraw/Scripts/TemplateOfTemplator/export-element-startup.md",
+    "9999 - Excalidraw/Scripts/TemplateOfTemplator/latex-canvas-startup.md",
+    "9999 - Excalidraw/Scripts/TemplateOfTemplator/voice-text-startup.md",
+    "9999 - Excalidraw/Scripts/TemplateOfTemplator/vim-mode-startup.md",
+    "9999 - Excalidraw/Scripts/TemplateOfTemplator/resize-pills-startup.md",
+    "9999 - Excalidraw/Scripts/TemplateOfTemplator/zoom-box-startup.md"
+  ],
+  "intellisense_render": 1,
+  "ignore_folders_on_creation": [
+    {
+      "folder": ""
+    }
+  ]
+}

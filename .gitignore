@@ -1,18 +1,22 @@
-# ===== Obsidian local/runtime state =====
+# ===== Commit most of .obsidian/ so a fresh clone gets plugins + scripts =====
+# but exclude session-local / secret / cache files:
+
+# UI session state (churns every save, causes merge conflicts)
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
 .obsidian/workspaces.json
+
+# Obsidian local caches
 .obsidian/cache
 .obsidian/types.json
 
-# Plugin runtime data (often contains secrets / device-local state)
+# Secrets — livesync stores encryption passphrase + remote DB credentials
 .obsidian/plugins/obsidian-livesync/data.json
-.obsidian/plugins/*/data.json
 
-# Hot-reloaded plugin builds
+# Plugin sourcemaps (dev-only, regenerated)
 .obsidian/plugins/*/main.js.map
 
-# ===== Vault caches =====
+# ===== Vault caches (regenerated) =====
 _cache/
 bookmode-cache/
 latex-cache/
@@ -34,9 +38,13 @@ Thumbs.db
 .idea/
 .vscode/
 
-# ===== Large binaries (re-enable selectively per folder if wanted) =====
+# ===== Large binaries =====
 *.goodnotes
 
 # ===== Backups =====
 *.bak
 *.bak.*
+
+
+sssss/
+.obsidian/plugins/obsidian-excalidraw-plugin/data.json
