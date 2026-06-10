@@ -16,7 +16,7 @@ Each template file is a JSON array of raw Excalidraw element objects.
 */
 
 // ---------- constants ----------
-const TEMPLATES_FOLDER = "Excalidraw/Templates";
+const TEMPLATES_FOLDER = "9999 - Excalidraw/Templates";
 const KEY = "Shape Templates config";
 const PANEL_ID = "shape-templates-panel";
 const STYLE_ID = "shape-templates-style";
