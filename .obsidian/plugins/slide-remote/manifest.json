@@ -1,0 +1,10 @@
+{
+  "id": "slide-remote",
+  "name": "Slide Remote",
+  "version": "1.0.0",
+  "minAppVersion": "1.4.0",
+  "description": "Control Obsidian slideshows from your phone — scan a QR, tap next/prev. Zero external setup. Local HTTP server only.",
+  "author": "ati",
+  "authorUrl": "",
+  "isDesktopOnly": true
+}

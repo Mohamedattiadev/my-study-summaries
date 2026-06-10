@@ -1,3 +1,9 @@
 [
-  "obsidian-excalidraw-plugin"
+  "obsidian-excalidraw-plugin",
+  "templater-obsidian",
+  "slide-remote",
+  "obsidian-livesync",
+  "video-share",
+  "excalidraw-zoom-wide",
+  "obsidian-icon-folder"
 ]

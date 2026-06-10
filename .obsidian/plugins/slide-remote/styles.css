@@ -1,0 +1,37 @@
+/* Slide Remote — Obsidian-side styles. Only used by the QR modal. */
+
+.slide-remote-qr-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 4px;
+}
+
+.slide-remote-qr-wrap canvas {
+  border-radius: 10px;
+  background: #fff;
+  padding: 8px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+}
+
+.slide-remote-qr-url {
+  font-family: var(--font-monospace, ui-monospace, monospace);
+  font-size: 12px;
+  word-break: break-all;
+  user-select: all;
+  text-align: center;
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  padding: 8px 10px;
+  border-radius: 6px;
+  max-width: 320px;
+}
+
+.slide-remote-qr-help {
+  font-size: 12px;
+  color: var(--text-muted);
+  max-width: 320px;
+  text-align: center;
+  line-height: 1.5;
+}

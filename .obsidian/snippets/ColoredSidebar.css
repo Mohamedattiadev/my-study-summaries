@@ -1,0 +1,63 @@
+/* =========================================================
+   Doom One Sidebar Theme for Obsidian — Studying vault
+   ========================================================= */
+
+:root {
+  --doom-blue: #51afef;
+  --doom-cyan: #46d9ff;
+  --doom-violet: #c678dd;
+  --doom-green: #98be65;
+  --doom-yellow: #ecbe7b;
+  --doom-orange: #da8548;
+  --doom-red: #ff6c6b;
+  --doom-gray: #cfcfcf;
+}
+
+.nav-folder-title-content {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+/* 00 - Index */
+.nav-folder-title[data-path^="00-Index"] .nav-folder-title-content { color: var(--doom-cyan) !important; }
+
+/* 01 - Algorithms */
+.nav-folder-title[data-path^="01-Algorithms"] .nav-folder-title-content { color: var(--doom-blue) !important; }
+
+/* 02 - Design Patterns */
+.nav-folder-title[data-path^="02-DesignPatterns"] .nav-folder-title-content { color: var(--doom-violet) !important; }
+
+/* 03 - OS */
+.nav-folder-title[data-path^="03-OS"] .nav-folder-title-content { color: var(--doom-green) !important; }
+
+/* 04 - Databases */
+.nav-folder-title[data-path^="04-Databases"] .nav-folder-title-content { color: var(--doom-yellow) !important; }
+
+/* 05 - Networking */
+.nav-folder-title[data-path^="05-Networking"] .nav-folder-title-content { color: var(--doom-orange) !important; }
+
+/* 06 - DataScience / Mining */
+.nav-folder-title[data-path^="06-DataScience-Mining"] .nav-folder-title-content { color: var(--doom-green) !important; opacity: 0.9; }
+
+/* 07 - Software Architecture */
+.nav-folder-title[data-path^="07-SoftwareArchitecture"] .nav-folder-title-content { color: var(--doom-red) !important; }
+
+/* 08 - Scientific Computing */
+.nav-folder-title[data-path^="08-ScientificComputing"] .nav-folder-title-content { color: var(--doom-yellow) !important; opacity: 0.9; }
+
+/* 09 - Security */
+.nav-folder-title[data-path^="09-Security"] .nav-folder-title-content { color: var(--doom-red) !important; opacity: 0.9; }
+
+/* 10 - English */
+.nav-folder-title[data-path^="10-English"] .nav-folder-title-content { color: var(--doom-cyan) !important; opacity: 0.85; }
+
+/* meta folders */
+.nav-folder-title[data-path^="90-Assets"] .nav-folder-title-content,
+.nav-folder-title[data-path^="999-Templates"] .nav-folder-title-content,
+.nav-folder-title[data-path^="9999"] .nav-folder-title-content,
+.nav-folder-title[data-path^="Excalidraw"] .nav-folder-title-content,
+.nav-folder-title[data-path^="_cache"] .nav-folder-title-content,
+.nav-folder-title[data-path^="_system"] .nav-folder-title-content {
+  color: var(--doom-gray) !important;
+  font-weight: 500;
+}

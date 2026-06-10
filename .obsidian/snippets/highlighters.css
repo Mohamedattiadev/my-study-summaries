@@ -1,0 +1,184 @@
+/* ============================================================================
+   HIGHLIGHTERS.CSS
+   Generic reusable highlighters for Obsidian
+   Works on ANY element (headings, text, lists, spans, divs)
+   ============================================================================ */
+
+/* ---------------------- BASE HIGHLIGHT ---------------------- */
+/* Use this class + any color class */
+.highlight {
+  background: var(--text-highlight-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 6px;
+  display: inline-block;
+  line-height: 1.6;
+}
+
+/* Inline-safe version (for text inside paragraphs) */
+.highlight-inline {
+  background: var(--text-highlight-bg);
+  padding: 0.05em 0.3em;
+  border-radius: 4px;
+}
+
+/* Block version (for headings, list items, blocks) */
+.highlight-block {
+  background: var(--text-highlight-bg);
+  padding: 0.4em 0.6em;
+  border-radius: 8px;
+  margin: 0.2em 0;
+}
+
+/* ---------------------- LEFT BAR STYLE ---------------------- */
+.highlight-bar {
+  background: none;
+  border-left: 4px solid var(--text-highlight-bg);
+  padding-left: 0.6em;
+  border-radius: 0;
+}
+
+/* ---------------------- UNDERLINE STYLE ---------------------- */
+.highlight-underline {
+  background: none;
+  border-bottom: 3px solid var(--text-highlight-bg);
+  padding-bottom: 0.1em;
+  border-radius: 0;
+}
+
+/* ---------------------- SOLID COLORS ---------------------- */
+
+.highlight-yellow {
+  --text-highlight-bg: rgba(255, 235, 59, 0.4);
+}
+
+.highlight-amber {
+  --text-highlight-bg: rgba(255, 193, 7, 0.35);
+}
+
+.highlight-orange {
+  --text-highlight-bg: rgba(255, 152, 0, 0.35);
+}
+
+.highlight-red {
+  --text-highlight-bg: rgba(244, 67, 54, 0.35);
+}
+
+.highlight-pink {
+  --text-highlight-bg: rgba(233, 30, 99, 0.3);
+}
+
+.highlight-purple {
+  --text-highlight-bg: rgba(156, 39, 176, 0.3);
+}
+
+.highlight-indigo {
+  --text-highlight-bg: rgba(63, 81, 181, 0.3);
+}
+
+.highlight-blue {
+  --text-highlight-bg: rgba(33, 150, 243, 0.3);
+}
+
+.highlight-light-blue {
+  --text-highlight-bg: rgba(3, 169, 244, 0.3);
+}
+
+.highlight-cyan {
+  --text-highlight-bg: rgba(0, 188, 212, 0.3);
+}
+
+.highlight-teal {
+  --text-highlight-bg: rgba(0, 150, 136, 0.3);
+}
+
+.highlight-green {
+  --text-highlight-bg: rgba(76, 175, 80, 0.3);
+}
+
+.highlight-light-green {
+  --text-highlight-bg: rgba(139, 195, 74, 0.3);
+}
+
+.highlight-lime {
+  --text-highlight-bg: rgba(205, 220, 57, 0.35);
+}
+
+/* ---------------------- NEUTRALS ---------------------- */
+
+.highlight-gray {
+  --text-highlight-bg: rgba(158, 158, 158, 0.3);
+}
+
+.highlight-cool-gray {
+  --text-highlight-bg: rgba(120, 144, 156, 0.3);
+}
+
+.highlight-warm-gray {
+  --text-highlight-bg: rgba(141, 110, 99, 0.3);
+}
+
+.highlight-brown {
+  --text-highlight-bg: rgba(121, 85, 72, 0.3);
+}
+
+/* ---------------------- SEMANTIC ---------------------- */
+
+.highlight-success {
+  --text-highlight-bg: rgba(76, 175, 80, 0.25);
+}
+
+.highlight-warning {
+  --text-highlight-bg: rgba(255, 193, 7, 0.3);
+}
+
+.highlight-danger {
+  --text-highlight-bg: rgba(244, 67, 54, 0.3);
+}
+
+.highlight-info {
+  --text-highlight-bg: rgba(33, 150, 243, 0.25);
+}
+
+.highlight-note {
+  --text-highlight-bg: rgba(96, 125, 139, 0.25);
+}
+
+/* ---------------------- GRADIENTS ---------------------- */
+
+.highlight-sunrise {
+  --text-highlight-bg: linear-gradient(
+    90deg,
+    rgba(255, 193, 7, 0.35),
+    rgba(255, 87, 34, 0.35)
+  );
+}
+
+.highlight-ocean {
+  --text-highlight-bg: linear-gradient(
+    90deg,
+    rgba(33, 150, 243, 0.35),
+    rgba(0, 188, 212, 0.35)
+  );
+}
+
+.highlight-forest {
+  --text-highlight-bg: linear-gradient(
+    90deg,
+    rgba(76, 175, 80, 0.35),
+    rgba(139, 195, 74, 0.35)
+  );
+}
+
+.highlight-grape {
+  --text-highlight-bg: linear-gradient(
+    90deg,
+    rgba(156, 39, 176, 0.35),
+    rgba(233, 30, 99, 0.35)
+  );
+}
+
+/* ---------------------- ACCENT-BASED ---------------------- */
+/* Uses your CyanVoxel pen color automatically */
+.highlight-accent {
+  --text-highlight-bg: var(--accent-color-trans);
+}

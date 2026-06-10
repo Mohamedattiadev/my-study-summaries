@@ -1,0 +1,10 @@
+{
+  "id": "video-share",
+  "name": "Video Share",
+  "version": "1.0.0",
+  "minAppVersion": "1.4.0",
+  "description": "Ultra-low-latency video broadcast from Obsidian — screen, camera, vault file, or Excalidraw canvas — to phones/laptops over LAN via WebRTC. Scan QR, watch live. No accounts, no cloud.",
+  "author": "ati",
+  "authorUrl": "",
+  "isDesktopOnly": true
+}

@@ -1,0 +1,9 @@
+{
+  "id": "excalidraw-zoom-wide",
+  "name": "Excalidraw Zoom Wide",
+  "version": "1.0.0",
+  "minAppVersion": "1.4.0",
+  "description": "True 1%..600% zoom for Excalidraw with instant SVG preview at low zoom. Replaces broken native renderer path on huge boards.",
+  "author": "ati",
+  "isDesktopOnly": false
+}

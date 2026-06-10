@@ -1,0 +1,132 @@
+[
+  {
+    "id": "e8557737c81946148828",
+    "type": "line",
+    "x": 10,
+    "y": 0,
+    "width": 100,
+    "height": 90,
+    "angle": 0,
+    "strokeColor": "#0078D4",
+    "backgroundColor": "#0078D4",
+    "fillStyle": "solid",
+    "strokeWidth": 2,
+    "strokeStyle": "solid",
+    "roughness": 0,
+    "opacity": 100,
+    "groupIds": [],
+    "frameId": null,
+    "roundness": null,
+    "seed": 1639289573,
+    "version": 1,
+    "versionNonce": 287822864,
+    "isDeleted": false,
+    "boundElements": null,
+    "updated": 1780616719586,
+    "link": null,
+    "locked": false,
+    "customData": null,
+    "points": [
+      [
+        50,
+        0
+      ],
+      [
+        100,
+        90
+      ],
+      [
+        0,
+        90
+      ],
+      [
+        50,
+        0
+      ]
+    ]
+  },
+  {
+    "id": "9bc1051be53a43b8b6f2",
+    "type": "line",
+    "x": 40,
+    "y": 32,
+    "width": 45,
+    "height": 48,
+    "angle": 0,
+    "strokeColor": "#ffffff",
+    "backgroundColor": "#ffffff",
+    "fillStyle": "solid",
+    "strokeWidth": 2,
+    "strokeStyle": "solid",
+    "roughness": 0,
+    "opacity": 100,
+    "groupIds": [],
+    "frameId": null,
+    "roundness": null,
+    "seed": 1644848677,
+    "version": 1,
+    "versionNonce": 1293224828,
+    "isDeleted": false,
+    "boundElements": null,
+    "updated": 1780616719586,
+    "link": null,
+    "locked": false,
+    "customData": null,
+    "points": [
+      [
+        20,
+        0
+      ],
+      [
+        45,
+        48
+      ],
+      [
+        0,
+        48
+      ],
+      [
+        20,
+        0
+      ]
+    ]
+  },
+  {
+    "id": "590961856cc448c3abb8",
+    "type": "text",
+    "x": 0,
+    "y": 95,
+    "width": 120,
+    "height": 22,
+    "angle": 0,
+    "strokeColor": "#0078D4",
+    "backgroundColor": "transparent",
+    "fillStyle": "solid",
+    "strokeWidth": 2,
+    "strokeStyle": "solid",
+    "roughness": 1,
+    "opacity": 100,
+    "groupIds": [],
+    "frameId": null,
+    "roundness": null,
+    "seed": 1613615774,
+    "version": 1,
+    "versionNonce": 922346551,
+    "isDeleted": false,
+    "boundElements": null,
+    "updated": 1780616719586,
+    "link": null,
+    "locked": false,
+    "customData": null,
+    "text": "Azure",
+    "originalText": "Azure",
+    "fontSize": 16,
+    "fontFamily": 1,
+    "textAlign": "center",
+    "verticalAlign": "middle",
+    "baseline": 18,
+    "containerId": null,
+    "lineHeight": 1.25,
+    "autoResize": true
+  }
+]

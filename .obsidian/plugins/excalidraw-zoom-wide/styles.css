@@ -1,0 +1,25 @@
+/* Excalidraw Zoom Wide — global stylesheet */
+
+/* Hide native canvases while SVG preview layer is active. */
+body.zoom-wide-preview-on .excalidraw__canvas { visibility: hidden !important; }
+
+/* Preview layer wrapper. Positioned absolutely over canvas host. */
+.zoom-wide-preview {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+  background: var(--background-primary, #fff);
+  transform-origin: 0 0;
+  transform: translate3d(0, 0, 0) scale(1);
+  will-change: transform;
+  contain: layout paint size;
+}
+.zoom-wide-preview > svg,
+.zoom-wide-preview > img,
+.zoom-wide-preview > canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

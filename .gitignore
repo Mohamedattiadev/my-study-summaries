@@ -1,0 +1,42 @@
+# ===== Obsidian local/runtime state =====
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/workspaces.json
+.obsidian/cache
+.obsidian/types.json
+
+# Plugin runtime data (often contains secrets / device-local state)
+.obsidian/plugins/obsidian-livesync/data.json
+.obsidian/plugins/*/data.json
+
+# Hot-reloaded plugin builds
+.obsidian/plugins/*/main.js.map
+
+# ===== Vault caches =====
+_cache/
+bookmode-cache/
+latex-cache/
+.trash/
+
+# ===== Livesync / collab runtime =====
+_system/_livesync-status.md
+_system/collab-sessions.json
+_livesync-status.md
+collab-sessions.json
+Collab/
+
+# ===== OS / editor junk =====
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# ===== Large binaries (re-enable selectively per folder if wanted) =====
+*.goodnotes
+
+# ===== Backups =====
+*.bak
+*.bak.*

@@ -1,0 +1,603 @@
+/*------------------------------------------------------------------------------
+              Notebook Background Color Schemes by CyanVoxel v2.2.3
+              + Extended Pack by Gemini (New Pens, Pages, Patterns)
+
+These CSS classes mimic real-world pages and pen colors.
+Apply a page class (e.g., .page-manila) and an optional pen class
+(e.g., .pen-blue) or pattern class (e.g., .page-dotted) in your note's YAML.
+
+Example YAML:
+cssclasses:
+  - page-lavender
+  - pen-purple
+  - page-waves
+------------------------------------------------------------------------------*/
+
+/* ==========================================================================
+   1. GLOBAL VARIABLES
+   ========================================================================== */
+:root {
+  /* --- Base Pen Colors (Original) --- */
+  --pen-white: #edf1fc;
+  --pen-gray: #5f5d58;
+  --pen-black: #26241f;
+  --pen-red: #e14a49;
+  --pen-green: #15b64f;
+  --pen-blue: #3f76ed;
+  --pen-light-blue: #54b6f8;
+  --pen-purple: #9b4ff0;
+
+  /* --- Extended Pen Colors (New) --- */
+  --pen-pink: #e91e63;
+  --pen-teal: #009688;
+  --pen-orange: #ff9800;
+
+  --neutral-pen-black: #272727;
+  --neutral-pen-black-trans: #27272722;
+
+  /* --- Page Colors --- */
+  --page-white: #ffffff;
+  --page-manila: #f3deaf;
+  --page-blue: #3f76ed;
+  --page-mint: #e0f2f1; /* Soft Engineering Green */
+  --page-chalk: #1e1e1e; /* Dark Chalkboard */
+
+  /* --- New Page Colors (Latest Additions) --- */
+  --page-lavender: #f3e5f5; /* Soft Purple Paper */
+  --page-peach: #fff3e0; /* Warm Cream Paper */
+  --page-solarized: #002b36; /* Deep Teal (Coding Dark Mode) */
+  --page-graphite: #2d2d2d; /* Neutral Dark Gray */
+
+  --grid-size: 32px;
+}
+
+/* Recolors images on the page with the current accent color. */
+.recolor-images img {
+  filter: var(--image-effect);
+}
+
+/* ==========================================================================
+   2. PAGE BACKGROUND LOGIC
+   ========================================================================== */
+
+/* --- Common Logic for All Pages --- */
+.page-manila,
+.page-white,
+.page-blueprint,
+.page-mint,
+.page-chalk,
+.page-lavender,
+.page-peach,
+.page-solarized,
+.page-graphite {
+  --text-normal: var(--accent-color);
+  --text-muted: var(--accent-color);
+  --text-faint: var(--accent-color-trans);
+  --h1-color: var(--accent-color);
+  --h2-color: var(--accent-color);
+  --h3-color: var(--accent-color);
+  --h4-color: var(--accent-color);
+  --h5-color: var(--accent-color);
+  --h6-color: var(--accent-color);
+
+  /* Link logic (can be overridden by specific pages) */
+  --link-color: var(--pen-blue);
+  --link-color-hover: var(--pen-light-blue);
+  --link-unresolved-color: var(--pen-red);
+
+  --hr-color: var(--accent-color);
+  --blockquote-border-color: var(--accent-color);
+  --embed-border-left: 2px solid var(--accent-color);
+  --collapse-icon-color-collapsed: var(--accent-color);
+  --checkbox-color: var(--accent-color);
+  --checkbox-marker-color: var(--page-color);
+  --checkbox-color-hover: var(--accent-color-trans);
+  --checkbox-border-color: var(--accent-color);
+  --checklist-done-color: var(--accent-color);
+  --list-marker-color: var(--accent-color);
+
+  --interactive-accent: var(--accent-color);
+  --metadata-label-text-color: var(--accent-color);
+  --metadata-input-text-color: var(--accent-color);
+  --tag-color: var(--accent-color);
+  --tag-background: var(--accent-color-trans);
+  --pill-cover-hover: color-mix(in srgb, var(--accent-color) 60%, transparent);
+  --background-modifier-border-focus: var(--accent-color);
+  --background-modifier-border: var(--accent-color-trans);
+  --background-modifier-hover: color-mix(
+    in srgb,
+    var(--accent-color) 60%,
+    transparent
+  );
+
+  color: var(--accent-color);
+  background-color: var(--page-color);
+  font-weight: bold;
+}
+
+/* --- Manila/Tan Page --- */
+.page-manila {
+  --page-color: var(--page-manila);
+  --accent-color: var(--pen-black);
+  --accent-color-trans: color-mix(
+    in srgb,
+    var(--accent-color) 15%,
+    transparent
+  );
+  --image-effect: brightness(0) saturate(100%) invert(14%) sepia(19%)
+    saturate(296%) hue-rotate(5deg) brightness(90%) contrast(96%);
+  color-scheme: light;
+}
+.embed-manila img {
+  background-color: var(--page-manila);
+}
+
+/* --- White Page --- */
+.page-white {
+  --page-color: var(--page-white);
+  --accent-color: var(--neutral-pen-black);
+  --accent-color-trans: color-mix(
+    in srgb,
+    var(--accent-color) 15%,
+    transparent
+  );
+  --image-effect: brightness(0) saturate(100%) invert(14%) sepia(19%)
+    saturate(296%) hue-rotate(5deg) brightness(90%) contrast(96%);
+  color-scheme: light;
+}
+.embed-white img {
+  background-color: var(--page-white);
+}
+
+/* --- Blueprint Page --- */
+.page-blueprint {
+  --page-color: var(--page-blue);
+  --accent-color: var(--pen-white);
+  --accent-color-trans: color-mix(
+    in srgb,
+    var(--accent-color) 15%,
+    transparent
+  );
+  --image-effect: brightness(0) saturate(100%) invert(89%) sepia(1%)
+    saturate(2714%) hue-rotate(196deg) brightness(107%) contrast(98%);
+  color-scheme: dark;
+
+  --link-color: color-mix(in srgb, var(--pen-light-blue) 60%, var(--pen-white));
+  --link-color-hover: color-mix(
+    in srgb,
+    var(--pen-light-blue) 20%,
+    var(--pen-white)
+  );
+}
+.embed-blueprint img {
+  background-color: var(--page-blue);
+}
+
+/* --- Mint Page --- */
+.page-mint {
+  --page-color: var(--page-mint);
+  --accent-color: var(--pen-teal);
+  --accent-color-trans: color-mix(
+    in srgb,
+    var(--accent-color) 15%,
+    transparent
+  );
+  --image-effect: brightness(0) saturate(100%) invert(39%) sepia(74%)
+    saturate(838%) hue-rotate(130deg) brightness(91%) contrast(101%);
+  color-scheme: light;
+}
+
+/* --- Chalkboard Page --- */
+.page-chalk {
+  --page-color: var(--page-chalk);
+  --accent-color: var(--pen-white);
+  --accent-color-trans: color-mix(
+    in srgb,
+    var(--accent-color) 15%,
+    transparent
+  );
+  --image-effect: brightness(0) saturate(100%) invert(89%) sepia(1%)
+    saturate(2714%) hue-rotate(196deg) brightness(107%) contrast(98%);
+  color-scheme: dark;
+  --link-color: #82b1ff;
+  --link-color-hover: #b388ff;
+}
+
+/* --- NEW: Lavender Page --- */
+.page-lavender {
+  --page-color: var(--page-lavender);
+  --accent-color: var(--pen-purple);
+  --accent-color-trans: color-mix(
+    in srgb,
+    var(--accent-color) 15%,
+    transparent
+  );
+  --image-effect: brightness(0) saturate(100%) invert(33%) sepia(59%)
+    saturate(2620%) hue-rotate(249deg) brightness(98%) contrast(93%);
+  color-scheme: light;
+}
+
+/* --- NEW: Peach Page --- */
+.page-peach {
+  --page-color: var(--page-peach);
+  --accent-color: var(--pen-black);
+  --accent-color-trans: color-mix(
+    in srgb,
+    var(--accent-color) 15%,
+    transparent
+  );
+  --image-effect: brightness(0) saturate(100%) invert(14%) sepia(19%)
+    saturate(296%) hue-rotate(5deg) brightness(90%) contrast(96%);
+  color-scheme: light;
+}
+
+/* --- NEW: Solarized Dark Page --- */
+.page-solarized {
+  --page-color: var(--page-solarized);
+  --accent-color: #839496; /* Solarized Base0 */
+  --accent-color-trans: color-mix(
+    in srgb,
+    var(--accent-color) 15%,
+    transparent
+  );
+  --image-effect: brightness(0) saturate(100%) invert(60%) sepia(11%)
+    saturate(548%) hue-rotate(143deg) brightness(91%) contrast(89%);
+  color-scheme: dark;
+  --link-color: #268bd2;
+  --link-color-hover: #2aa198;
+}
+
+/* --- NEW: Graphite Page --- */
+.page-graphite {
+  --page-color: var(--page-graphite);
+  --accent-color: #dcdcdc; /* Light Gray Pen */
+  --accent-color-trans: color-mix(
+    in srgb,
+    var(--accent-color) 15%,
+    transparent
+  );
+  --image-effect: brightness(0) saturate(100%) invert(98%) sepia(0%)
+    saturate(122%) hue-rotate(167deg) brightness(94%) contrast(91%);
+  color-scheme: dark;
+  --link-color: #90caf9;
+  --link-color-hover: #64b5f6;
+}
+
+/* ==========================================================================
+   3. BACKGROUND PATTERNS
+   ========================================================================== */
+
+/* Grid */
+.page-grid {
+  background-image:
+    linear-gradient(
+      0deg,
+      transparent 0px,
+      var(--accent-color-trans) 1px,
+      var(--accent-color-trans) 2px,
+      transparent 3px
+    ),
+    linear-gradient(
+      90deg,
+      transparent calc(var(--grid-size) - 3px),
+      var(--accent-color-trans) calc(var(--grid-size) - 2px),
+      var(--accent-color-trans) calc(var(--grid-size) - 1px),
+      transparent var(--grid-size)
+    );
+  background-size: var(--grid-size) var(--grid-size);
+}
+
+/* Ladder */
+.page-ladder {
+  background-image: linear-gradient(
+    to right,
+    transparent 0,
+    var(--accent-color-trans) 2px,
+    transparent 2px
+  );
+  background-size: 48px 100%;
+}
+
+/* Isometric */
+.page-isometric {
+  background-image:
+    repeating-linear-gradient(
+      30deg,
+      var(--accent-color-trans),
+      var(--accent-color-trans) 1px,
+      transparent 1px,
+      transparent var(--grid-size)
+    ),
+    repeating-linear-gradient(
+      -30deg,
+      var(--accent-color-trans),
+      var(--accent-color-trans) 1px,
+      transparent 1px,
+      transparent var(--grid-size)
+    );
+}
+
+/* College Rule */
+.page-college {
+  background-image:
+    linear-gradient(
+      to bottom,
+      transparent 23px,
+      var(--accent-color-trans) 24px
+    ),
+    linear-gradient(to right, var(--accent-color-trans) 2px, transparent 2px);
+  background-size:
+    100% 24px,
+    64px 100%;
+}
+
+/* Cross / Plus Sign */
+.page-cross-random {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 18px,
+      var(--accent-color-trans) 18px,
+      var(--accent-color-trans) 19px,
+      transparent 19px,
+      transparent 37px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 23px,
+      var(--accent-color-trans) 23px,
+      var(--accent-color-trans) 24px,
+      transparent 24px,
+      transparent 41px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      transparent 0,
+      transparent 29px,
+      var(--accent-color-trans) 29px,
+      transparent 30px
+    );
+}
+
+/* Dotted */
+.page-dotted {
+  background-image: radial-gradient(
+    var(--accent-color-trans) 1px,
+    transparent 1px
+  );
+  background-size: var(--grid-size) var(--grid-size);
+  background-position: center;
+}
+
+/* Lined */
+.page-lined {
+  background-image: linear-gradient(
+    transparent calc(var(--grid-size) - 1px),
+    var(--accent-color-trans) calc(var(--grid-size) - 1px)
+  );
+  background-size: 100% var(--grid-size);
+}
+
+/* Diagonal */
+.page-diagonal {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--accent-color-trans),
+    var(--accent-color-trans) 1px,
+    transparent 1px,
+    transparent var(--grid-size)
+  );
+}
+
+/* Grain / Noise */
+.page-grain {
+  background-image:
+    radial-gradient(var(--accent-color-trans) 10%, transparent 10%),
+    radial-gradient(var(--accent-color-trans) 10%, transparent 10%);
+  background-position:
+    0 0,
+    2px 2px;
+  background-size: 4px 4px;
+  opacity: 0.5;
+}
+
+/* Waves */
+.page-waves {
+  background-image: repeating-radial-gradient(
+    circle at top left,
+    var(--accent-color-trans),
+    transparent 60px
+  );
+}
+
+/* ==========================================================================
+   4. PEN COLORS & EFFECTS
+   ========================================================================== */
+
+/* SVGs - Apply to all pages and pens */
+:is(
+    .page-white,
+    .page-manila,
+    .page-blueprint,
+    .page-mint,
+    .page-chalk,
+    .page-lavender,
+    .page-peach,
+    .page-solarized,
+    .page-graphite,
+    .pen-white,
+    .pen-blue,
+    .pen-red,
+    .pen-green,
+    .pen-black,
+    .pen-gray,
+    .pen-purple,
+    .pen-pink,
+    .pen-teal,
+    .pen-orange
+  )
+  svg {
+  color: color-mix(in srgb, var(--accent-color) 60%, transparent);
+}
+
+/* Code Blocks & Metadata */
+:is(
+    .page-white,
+    .page-manila,
+    .page-blueprint,
+    .page-mint,
+    .page-chalk,
+    .page-lavender,
+    .page-peach,
+    .page-solarized,
+    .page-graphite
+  )
+  :is(code, .HyperMD-codeblock, .cm-inline-code) {
+  --code-normal: var(--accent-color);
+  --code-background: color-mix(
+    in srgb,
+    var(--page-color) 80%,
+    black
+  ) !important;
+}
+div > pre {
+  --code-background: color-mix(
+    in srgb,
+    var(--page-color) 80%,
+    black
+  ) !important;
+}
+
+:is(
+  .page-white,
+  .page-manila,
+  .page-blueprint,
+  .page-mint,
+  .page-chalk,
+  .page-lavender,
+  .page-peach,
+  .page-solarized,
+  .page-graphite
+) {
+  --metadata-input-background-active: var(--accent-color-trans);
+}
+
+/* --- Pen Definitions --- */
+
+.pen-white {
+  --accent-color: var(--pen-white);
+  --accent-color-trans: color-mix(in srgb, var(--pen-white) 15%, transparent);
+  color: var(--accent-color);
+  --hr-color: var(--accent-color);
+  --image-effect: brightness(0) saturate(100%) invert(89%) sepia(1%)
+    saturate(2714%) hue-rotate(196deg) brightness(107%) contrast(98%);
+}
+.pen-blue {
+  --accent-color: var(--pen-blue);
+  --accent-color-trans: color-mix(in srgb, var(--pen-blue) 15%, transparent);
+  color: var(--accent-color);
+  --hr-color: var(--accent-color);
+  --image-effect: brightness(0) saturate(100%) invert(36%) sepia(95%)
+    saturate(945%) hue-rotate(199deg) brightness(95%) contrast(95%);
+}
+.pen-red {
+  --accent-color: var(--pen-red);
+  --accent-color-trans: color-mix(in srgb, var(--pen-red) 15%, transparent);
+  color: var(--accent-color);
+  --hr-color: var(--accent-color);
+  --image-effect: brightness(0) saturate(100%) invert(40%) sepia(41%)
+    saturate(1024%) hue-rotate(316deg) brightness(99%) contrast(94%);
+}
+.pen-green {
+  --accent-color: var(--pen-green);
+  --accent-color-trans: color-mix(in srgb, var(--pen-green) 15%, transparent);
+  color: var(--accent-color);
+  --hr-color: var(--accent-color);
+  --image-effect: brightness(0) saturate(100%) invert(52%) sepia(60%)
+    saturate(2521%) hue-rotate(105deg) brightness(96%) contrast(84%);
+}
+.pen-black {
+  --accent-color: var(--pen-black);
+  --accent-color-trans: color-mix(in srgb, var(--pen-black) 15%, transparent);
+  color: var(--accent-color);
+  --hr-color: var(--accent-color);
+  --image-effect: brightness(0) saturate(100%) invert(14%) sepia(19%)
+    saturate(296%) hue-rotate(5deg) brightness(90%) contrast(96%);
+}
+.pen-gray {
+  --accent-color: var(--pen-gray);
+  --accent-color-trans: color-mix(in srgb, var(--pen-gray) 15%, transparent);
+  color: var(--accent-color);
+  --hr-color: var(--accent-color);
+  --image-effect: brightness(0) saturate(100%) invert(35%) sepia(13%)
+    saturate(189%) hue-rotate(5deg) brightness(96%) contrast(86%);
+}
+.pen-purple {
+  --accent-color: var(--pen-purple);
+  --accent-color-trans: color-mix(in srgb, var(--pen-purple) 15%, transparent);
+  color: var(--accent-color);
+  --hr-color: var(--accent-color);
+  --image-effect: brightness(0) saturate(100%) invert(33%) sepia(59%)
+    saturate(2620%) hue-rotate(249deg) brightness(98%) contrast(93%);
+}
+
+/* --- New Pens --- */
+.pen-pink {
+  --accent-color: var(--pen-pink);
+  --accent-color-trans: color-mix(in srgb, var(--pen-pink) 15%, transparent);
+  color: var(--accent-color);
+  --hr-color: var(--accent-color);
+  --image-effect: brightness(0) saturate(100%) invert(23%) sepia(85%)
+    saturate(3481%) hue-rotate(328deg) brightness(88%) contrast(98%);
+}
+.pen-teal {
+  --accent-color: var(--pen-teal);
+  --accent-color-trans: color-mix(in srgb, var(--pen-teal) 15%, transparent);
+  color: var(--accent-color);
+  --hr-color: var(--accent-color);
+  --image-effect: brightness(0) saturate(100%) invert(39%) sepia(74%)
+    saturate(838%) hue-rotate(130deg) brightness(91%) contrast(101%);
+}
+.pen-orange {
+  --accent-color: var(--pen-orange);
+  --accent-color-trans: color-mix(in srgb, var(--pen-orange) 15%, transparent);
+  color: var(--accent-color);
+  --hr-color: var(--accent-color);
+  --image-effect: brightness(0) saturate(100%) invert(67%) sepia(70%)
+    saturate(1556%) hue-rotate(360deg) brightness(101%) contrast(104%);
+}
+
+/* ==========================================================================
+   7. HIGHLIGHTER COLORS
+   ========================================================================== */
+/* ================= HEADER HIGHLIGHT SYSTEM ================= */
+
+/* Base rule: only affects elements that opt in */
+.h2-highlight {
+  background-color: var(--text-highlight-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* Default Highlight (Yellow) */
+.highlight-yellow {
+  --text-highlight-bg: rgba(255, 235, 59, 0.4);
+}
+
+/* Pink Highlight */
+.highlight-pink {
+  --text-highlight-bg: rgba(233, 30, 99, 0.3);
+}
+
+/* Green Highlight */
+.highlight-green {
+  --text-highlight-bg: rgba(76, 175, 80, 0.3);
+}
+
+/* Blue Highlight */
+.highlight-blue {
+  --text-highlight-bg: rgba(33, 150, 243, 0.3);
+}

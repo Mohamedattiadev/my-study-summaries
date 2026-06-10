@@ -1,3 +1,13 @@
 {
-  "enabledCssSnippets": []
+  "enabledCssSnippets": [
+    "ColoredSidebar",
+    "notebookbg",
+    "GeneralTweaks",
+    "highlighters"
+  ],
+  "cssTheme": "Things",
+  "accentColor": "#8e41aa",
+  "showViewHeader": true,
+  "showRibbon": true,
+  "nativeMenus": false
 }
