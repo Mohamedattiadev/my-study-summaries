@@ -44,9 +44,5 @@
   "90-Assets": "LiImages",
   "999-Templates": "LiTerminalSquare",
   "_cache": "LiArchive",
-  "_system": "LiSettings",
-  "9999 - Excalidraw": {
-    "iconName": "LiExcalidrawIcon",
-    "iconColor": "#7c07bb"
-  }
+  "_system": "LiSettings"
 }

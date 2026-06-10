@@ -31,7 +31,7 @@ const LABEL_GAP = 12;
 const EXISTING_CONTENT_PAD = 80;
 const DEFAULT_PAPER_SPACING = 24;
 const DEFAULT_PAPER_COLOR = "#cfcfcf";
-const PATTERN_SCALE = 3;  // render pattern PNG at Nx page resolution for HiDPI sharpness
+const PATTERN_SCALE = 1;  // SVG patterns scale crisp natively; kept for cache-bust on regenerate
 const PDF_QUALITY_ZOOM = 2; // PDF rasterizer zoom — higher = sharper but bigger file
 
 const DEFAULTS = {
@@ -122,89 +122,65 @@ function getCurrentPageSize() {
   return s.id === "cust" ? { w: cfg.custW, h: cfg.custH } : { w: s.w, h: s.h };
 }
 
-// ---------- pattern as single PNG image per page ----------
-// PNG rendered via offscreen canvas because Excalidraw's image rasterizer
-// doesn't honor SVG <pattern> fills. Cached as binary vault file because
-// addImage(data-URL) crashes inside EmbeddedFilesLoader.
+// ---------- pattern as single SVG image per page ----------
+// SVG with explicit <line>/<circle> elements (NOT <pattern> fills — Excalidraw's
+// image rasterizer ignores those). Vectors stay crisp at any zoom + the file's
+// declared width/height stick after Excalidraw's EmbeddedFilesLoader resolves.
+// PNG fallback was lossy: PATTERN_SCALE upscale caused el.width override to be
+// undone by the loader → image overflowed the page on zoom-in.
 const PATTERN_CACHE_DIR = "bookmode-cache";
 
-async function buildPatternPNG(w, h, mode, color) {
+function buildPatternSVG(w, h, mode, color) {
   if (mode === "off") return null;
-  // Render at PATTERN_SCALE × native size for HiDPI sharpness in editor + PDF export.
-  const scale = PATTERN_SCALE;
-  const cw = w * scale, ch = h * scale;
-  const canvas = document.createElement("canvas");
-  canvas.width = cw; canvas.height = ch;
-  const ctx = canvas.getContext("2d");
-  // Pre-multiply transform so we can keep drawing logic in native units
-  ctx.setTransform(scale, 0, 0, scale, 0, 0);
-  ctx.strokeStyle = color;
-  ctx.fillStyle = color;
-  ctx.lineWidth = 1 / scale;  // visually 1px after the scale transform
-  // Crisp line rendering
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
-
   const s = DEFAULT_PAPER_SPACING;
-  // half-pixel offset in native units = sharp lines after upscale
-  const hp = 0.5 / scale;
+  const parts = [];
+  parts.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges">`);
+  parts.push(`<g stroke="${color}" fill="${color}" stroke-width="1">`);
 
   if (mode === "dotted") {
     for (let x = s; x < w; x += s)
-      for (let y = s; y < h; y += s) {
-        ctx.beginPath(); ctx.arc(x, y, 1.4, 0, Math.PI * 2); ctx.fill();
-      }
+      for (let y = s; y < h; y += s)
+        parts.push(`<circle cx="${x}" cy="${y}" r="1.4" stroke="none"/>`);
   } else if (mode === "cross") {
     const arm = 3;
-    ctx.beginPath();
     for (let x = s; x < w; x += s)
       for (let y = s; y < h; y += s) {
-        ctx.moveTo(x - arm, y + hp); ctx.lineTo(x + arm, y + hp);
-        ctx.moveTo(x + hp, y - arm); ctx.lineTo(x + hp, y + arm);
+        parts.push(`<line x1="${x - arm}" y1="${y}" x2="${x + arm}" y2="${y}"/>`);
+        parts.push(`<line x1="${x}" y1="${y - arm}" x2="${x}" y2="${y + arm}"/>`);
       }
-    ctx.stroke();
   } else if (mode === "ruled") {
-    ctx.beginPath();
-    for (let y = s; y < h; y += s) { ctx.moveTo(0, y + hp); ctx.lineTo(w, y + hp); }
-    ctx.stroke();
+    for (let y = s; y < h; y += s)
+      parts.push(`<line x1="0" y1="${y}" x2="${w}" y2="${y}"/>`);
   } else if (mode === "dashed") {
-    ctx.setLineDash([4, 4]);
-    ctx.beginPath();
-    for (let y = s; y < h; y += s) { ctx.moveTo(0, y + hp); ctx.lineTo(w, y + hp); }
-    for (let x = s; x < w; x += s) { ctx.moveTo(x + hp, 0); ctx.lineTo(x + hp, h); }
-    ctx.stroke();
-    ctx.setLineDash([]);
+    for (let y = s; y < h; y += s)
+      parts.push(`<line x1="0" y1="${y}" x2="${w}" y2="${y}" stroke-dasharray="4 4"/>`);
+    for (let x = s; x < w; x += s)
+      parts.push(`<line x1="${x}" y1="0" x2="${x}" y2="${h}" stroke-dasharray="4 4"/>`);
   } else { // grid
-    ctx.beginPath();
-    for (let y = s; y < h; y += s) { ctx.moveTo(0, y + hp); ctx.lineTo(w, y + hp); }
-    for (let x = s; x < w; x += s) { ctx.moveTo(x + hp, 0); ctx.lineTo(x + hp, h); }
-    ctx.stroke();
+    for (let y = s; y < h; y += s)
+      parts.push(`<line x1="0" y1="${y}" x2="${w}" y2="${y}"/>`);
+    for (let x = s; x < w; x += s)
+      parts.push(`<line x1="${x}" y1="0" x2="${x}" y2="${h}"/>`);
   }
-
-  return await new Promise((resolve, reject) => {
-    canvas.toBlob(async (blob) => {
-      if (!blob) return reject(new Error("toBlob failed"));
-      resolve(await blob.arrayBuffer());
-    }, "image/png");
-  });
+  parts.push(`</g></svg>`);
+  return new TextEncoder().encode(parts.join("")).buffer;
 }
 
 async function getOrCreatePatternFile(w, h, mode, color) {
   const safeColor = color.replace(/[^0-9a-zA-Z]/g, "");
-  const filename = `bm_${mode}_${safeColor}_${w}x${h}_x${PATTERN_SCALE}.png`;
+  // .svg extension + v2 cache-bust (old PNG cache files become irrelevant).
+  const filename = `bm_${mode}_${safeColor}_${w}x${h}_v2.svg`;
   const path = `${PATTERN_CACHE_DIR}/${filename}`;
   const app = ea.plugin.app;
   let file = app.vault.getAbstractFileByPath(path);
   if (file) return file;
   try { await app.vault.createFolder(PATTERN_CACHE_DIR); } catch (e) { /* exists */ }
   let buf;
-  try { buf = await buildPatternPNG(w, h, mode, color); }
-  catch (e) { console.error("[BookMode] buildPatternPNG failed", e); return null; }
-  if (!buf) { console.warn("[BookMode] buildPatternPNG returned null", mode); return null; }
-  console.log("[BookMode] PNG buf bytes:", buf.byteLength, "path:", path);
+  try { buf = buildPatternSVG(w, h, mode, color); }
+  catch (e) { console.error("[BookMode] buildPatternSVG failed", e); return null; }
+  if (!buf) { console.warn("[BookMode] buildPatternSVG returned null", mode); return null; }
   try {
     file = await app.vault.createBinary(path, buf);
-    console.log("[BookMode] created file:", file?.path);
     return file;
   } catch (e) {
     console.warn("[BookMode] createBinary failed, refetching", e);
@@ -219,8 +195,10 @@ async function pushPatternImage(pageX, pageY, pageW, pageH, idx, mode, color) {
   if (mode === "off") return null;
   const file = await getOrCreatePatternFile(pageW, pageH, mode, color);
   if (!file) { console.warn("[BookMode] no pattern file"); return null; }
-  // scale=true so Excalidraw runs its image-load pipeline. Don't override w/h —
-  // let native SVG dimensions take effect; loader sets width/height once file resolves.
+  // SVG natural dimensions == pageW × pageH (declared in <svg width/height>) so
+  // EmbeddedFilesLoader's auto-sizing matches our intent. Still set x/y + locked
+  // explicitly. width/height override now redundant but kept for safety on
+  // older Excalidraw builds that may reset to 1×1 placeholder briefly.
   const id = await ea.addImage(pageX, pageY, file, true, true);
   const el = ea.getElement(id);
   if (el) {
