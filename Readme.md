@@ -78,7 +78,7 @@ See [[90-Assets/Images-Summary/HOW TO RUN THE SUMMARY OBSIDIAN.svg]] for the ori
 
 <p align="center">
   <img
-    src="../90-Assets/Images-Summary/HOW%20TO%20RUN%20THE%20SUMMARY%20OBSIDIAN.svg"
+    src="90-Assets/Images-Summary/HOW TO RUN THE SUMMARY OBSIDIAN.svg"
     width="700"
   >
 </p>
