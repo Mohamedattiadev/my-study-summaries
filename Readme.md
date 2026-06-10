@@ -10,24 +10,24 @@ rather than exhaustive textbook coverage.
 
 ## 📂 Vault Structure
 
-| Folder | Contents |
-|---|---|
-| `00-Index/` | Master `Index.md`, readme, how-to-run notes |
-| `01-Algorithms/` | Algorithms & complexity |
-| `02-DesignPatterns/` | OOP design patterns |
-| `03-OS/` | Operating systems, xv6 workflow |
-| `04-Databases/` | DBMS, SQL, transactions |
-| `05-Networking/` | Computer networks |
-| `06-DataScience-Mining/` | Data science + data mining |
-| `07-SoftwareArchitecture/` | Software architecture chapters + PDFs |
-| `08-ScientificComputing/` | Numerical methods |
-| `09-Security/` | Security topics |
-| `10-English/` | English exam revision |
-| `90-Assets/` | Images: `Images-Eng/`, `Images-Summary/`, `Pasted/` |
-| `999-Templates/` | Templater note templates |
-| `9999 - Excalidraw/` | All `.excalidraw.md` drawings + drawing templates |
-| `_cache/` | bookmode / latex caches *(gitignored)* |
-| `_system/` | livesync + collab runtime *(gitignored)* |
+| Folder                     | Contents                                            |
+| -------------------------- | --------------------------------------------------- |
+| `00-Index/`                | Master `Index.md`, readme, how-to-run notes         |
+| `01-Algorithms/`           | Algorithms & complexity                             |
+| `02-DesignPatterns/`       | OOP design patterns                                 |
+| `03-OS/`                   | Operating systems, xv6 workflow                     |
+| `04-Databases/`            | DBMS, SQL, transactions                             |
+| `05-Networking/`           | Computer networks                                   |
+| `06-DataScience-Mining/`   | Data science + data mining                          |
+| `07-SoftwareArchitecture/` | Software architecture chapters + PDFs               |
+| `08-ScientificComputing/`  | Numerical methods                                   |
+| `09-Security/`             | Security topics                                     |
+| `10-English/`              | English exam revision                               |
+| `90-Assets/`               | Images: `Images-Eng/`, `Images-Summary/`, `Pasted/` |
+| `999-Templates/`           | Templater note templates                            |
+| `9999 - Excalidraw/`       | All `.excalidraw.md` drawings + drawing templates   |
+| `_cache/`                  | bookmode / latex caches *(gitignored)*              |
+| `_system/`                 | livesync + collab runtime *(gitignored)*            |
 
 Sidebar uses **Doom One** colors (see `.obsidian/snippets/ColoredSidebar.css`)
 plus Lucide folder icons via `obsidian-icon-folder`.
@@ -74,7 +74,7 @@ CSS theme: **Things** + custom snippets (`ColoredSidebar`, `GeneralTweaks`,
 
 ## 🛠 Running the Summary
 
-See [[sssss/0000- HOW TO RUN THE SUMMARY]] for the original walkthrough.
+See [[90-Assets/Images-Summary/HOW TO RUN THE SUMMARY OBSIDIAN.svg]] for the original walkthrough.
 
 <p align="center">
   <img
