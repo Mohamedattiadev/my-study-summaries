@@ -128,7 +128,7 @@ function getCurrentPageSize() {
 // declared width/height stick after Excalidraw's EmbeddedFilesLoader resolves.
 // PNG fallback was lossy: PATTERN_SCALE upscale caused el.width override to be
 // undone by the loader → image overflowed the page on zoom-in.
-const PATTERN_CACHE_DIR = "bookmode-cache";
+const PATTERN_CACHE_DIR = "_cache/bookmode-cache";
 
 function buildPatternSVG(w, h, mode, color) {
   if (mode === "off") return null;
