@@ -15,33 +15,33 @@ Master index of all topic notes.
 - [[000- xv6- workflow]]
 
 ## 04 — Databases
-- [[sssss/5- DB]]
+- [[5- DB]]
 
 ## 05 — Networking
-- [[sssss/6 - Computer Networking]]
+- [[6 - Computer Networking]]
 
 ## 06 — Data Science / Mining
-- [[sssss/3 - Data SCi.]]
-- [[sssss/7- Data Mining]]
+- [[3 - Data SCi.]]
+- [[7- Data Mining]]
 
 ## 07 — Software Architecture
-- [[sssss/8.2 - Software Architecture - (5-..)]]
+- [[8.2 - Software Architecture - (5-..)]]
 - [[8.1 - Software Architecture - chp (1-4)-High quality.pdf]]
-- [[sssss/8.1 - Software Architecture - chp (1-4)-Mid quality.pdf]]
+- [[8.1 - Software Architecture - chp (1-4)-Mid quality.pdf]]
 
 ## 08 — Scientific Computing
-- [[sssss/9- Scientific Computing]]
+- [[9- Scientific Computing]]
 
 ## 09 — Security
-- [[sssss/10 - secure]]
+- [[10 - secure]]
 
 ## 10 — English
-- [[10-English/English revision (prep. exam)]]
+- [[000 - prep eng]]
 
 ---
 
 ## Meta
-- [[sssss/0000- HOW TO RUN THE SUMMARY]]
+- [[0000- HOW TO RUN THE SUMMARY]]
 - [[Readme]]
 
 ## Assets
@@ -50,6 +50,4 @@ Master index of all topic notes.
 - `90-Assets/Pasted/` — pasted clipboard images
 
 ## Drawings
-- `Excalidraw/` — all `.excalidraw.md` files
-
-[^1]: 
+- `9999 - Excalidraw/` — all `.excalidraw.md` files
