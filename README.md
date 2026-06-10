@@ -46,12 +46,11 @@ git clone <repo-url> "MY STUDING EXCALI"
 4. **Livesync setup (optional)** — `.obsidian/plugins/obsidian-livesync/data.json`
    is gitignored (contains secrets). Configure it locally from the plugin's
    settings panel.
-5. **Pin Excalidraw scripts** — Excalidraw plugin settings store pinned scripts
-   in a gitignored file (it also holds AI API keys). On a fresh clone, pin
-   these 8 scripts manually:
-   - Open Excalidraw settings → **Scripts library** → right-click each → **Pin to tools panel**:
-     1. `Voice Text`  2. `Pen Styles`  3. `Slideshow`  4. `Minimap`
-     5. `Book Mode`  6. `Excalidraw Collaboration Frame`  7. `Paper Mode`  8. `Zoom Box`
+5. **First launch auto-pins Excalidraw scripts.** A Templater startup template
+   (`9999 - Excalidraw/Scripts/TemplateOfTemplator/excalidraw-bootstrap.md`)
+   detects an empty pin list, writes the 8 recommended pins + correct
+   `scriptFolderPath` into Excalidraw's `data.json`, then hot-reloads the
+   plugin. You should see a `Excalidraw: recommended scripts pinned ✓` notice.
    - Optional: add your own AI API keys (OpenAI / Gemini / Groq / OpenRouter)
      in Excalidraw settings → AI providers.
 

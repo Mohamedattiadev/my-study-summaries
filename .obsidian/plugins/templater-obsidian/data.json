@@ -30,6 +30,7 @@
   "syntax_highlighting_mobile": false,
   "enabled_templates_hotkeys": [],
   "startup_templates": [
+    "9999 - Excalidraw/Scripts/TemplateOfTemplator/excalidraw-bootstrap.md",
     "9999 - Excalidraw/Scripts/TemplateOfTemplator/mask-tap-startup.md",
     "9999 - Excalidraw/Scripts/TemplateOfTemplator/minimap-startup.md",
     "9999 - Excalidraw/Scripts/TemplateOfTemplator/ai-edit-startup.md",
