@@ -1623,7 +1623,7 @@ f2d20abbcfd7612c9b38f5f7c5300a1ef6e4ab50: [[Pasted Image 20260528192004_058.png]
 
 26d348711bfcf4ffec3bc1b909ce59ef23a09a8c: [[Pasted Image 20260528200232_958.png]]
 
-b3f6737cc6eae6be5bcff836b5c82b7fce5bfa27: [[sssss/IMAGES (USED IN SUMMARY)/Pasted Image 20260608022026_565.png]]
+b3f6737cc6eae6be5bcff836b5c82b7fce5bfa27: [[90-Assets/Images-Summary/Pasted Image 20260608022026_565.png]]
 
 %%
 ## Drawing
