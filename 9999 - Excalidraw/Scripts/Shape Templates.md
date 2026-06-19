@@ -74,11 +74,27 @@ function persistSoon() {
   }, 400);
 }
 
-// ---------- shared float-panel z-index stack ----------
+// ---------- shared float-panel z-index stack + modal-aware auto-hide ----------
+const PANEL_Z_BASE = 50;
+const PANEL_Z_MAX  = 70;
 function stRaisePanel(el) {
   if (!el) return;
-  if (typeof window.__excaliPanelZ !== "number") window.__excaliPanelZ = 1000;
-  el.style.zIndex = String(++window.__excaliPanelZ);
+  if (typeof window.__excaliPanelZ !== "number") window.__excaliPanelZ = PANEL_Z_BASE;
+  window.__excaliPanelZ = window.__excaliPanelZ >= PANEL_Z_MAX ? PANEL_Z_BASE : window.__excaliPanelZ + 1;
+  el.style.zIndex = String(window.__excaliPanelZ);
+}
+if (!window.__excaliPanelSuppressInstalled) {
+  window.__excaliPanelSuppressInstalled = true;
+  const _s = document.createElement("style");
+  _s.id = "excali-panel-suppress-style";
+  _s.textContent = `body.excali-modal-open .excali-floating-panel { display: none !important; }`;
+  document.head.appendChild(_s);
+  const _update = () => {
+    const open = !!document.querySelector("body > .modal-container, body > .suggestion-container, body > .prompt");
+    document.body.classList.toggle("excali-modal-open", open);
+  };
+  new MutationObserver(_update).observe(document.body, { childList: true });
+  _update();
 }
 
 // ---------- starter pack ----------
@@ -1930,7 +1946,7 @@ if (!document.getElementById(STYLE_ID)) {
   styleTag.id = STYLE_ID;
   styleTag.textContent = `
     #${PANEL_ID} {
-      position: fixed; top: 140px; right: 80px;
+      position: absolute; top: 80px; right: 16px;
       width: 248px; max-height: 75vh; display:flex; flex-direction:column;
       padding: 10px 10px 10px;
       box-sizing: border-box; overflow: hidden;
@@ -1938,7 +1954,7 @@ if (!document.getElementById(STYLE_ID)) {
       border: 1px solid var(--background-modifier-border);
       border-radius: 10px;
       box-shadow: 0 6px 24px rgba(0,0,0,0.28);
-      z-index: 1000; font-size: 12px;
+      z-index: 50; font-size: 12px;
       font-family: var(--font-interface);
     }
     #${PANEL_ID} * { box-sizing: border-box; }
@@ -2102,12 +2118,12 @@ if (!document.getElementById(STYLE_ID)) {
     #${PANEL_ID} .st-chip.is-dragging { opacity: 0.4; }
 
     .st-ctx-menu {
-      position: fixed;
+      position: absolute;
       background: var(--background-primary);
       border: 1px solid var(--background-modifier-border);
       border-radius: 6px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-      z-index: 99999; min-width: 140px;
+      z-index: 66; min-width: 140px;
       padding: 4px 0; font-size: 12px;
       font-family: var(--font-interface);
     }
@@ -2118,7 +2134,7 @@ if (!document.getElementById(STYLE_ID)) {
     .st-ctx-item:hover { background: var(--background-modifier-hover); }
 
     .st-preview {
-      position: fixed; z-index: 99998;
+      position: absolute; z-index: 65;
       background: var(--background-primary);
       border: 1px solid var(--background-modifier-border);
       border-radius: 8px; padding: 8px;
@@ -2177,7 +2193,13 @@ if (!document.getElementById(STYLE_ID)) {
 
 panel = document.createElement("div");
 panel.id = PANEL_ID;
-document.body.appendChild(panel);
+panel.classList.add("excali-floating-panel");
+const _panelHost =
+  view.contentEl.querySelector(".excalidraw") || view.contentEl;
+if (_panelHost && getComputedStyle(_panelHost).position === "static") {
+  _panelHost.style.position = "relative";
+}
+_panelHost.appendChild(panel);
 stRaisePanel(panel);
 panel.addEventListener("mousedown", () => stRaisePanel(panel), true);
 
@@ -2224,9 +2246,10 @@ closeBtn.onclick = () => { disarm(); panel.style.display = "none"; };
   });
   window.addEventListener("mousemove", (e) => {
     if (!dragging) return;
+    const hr = _panelHost.getBoundingClientRect();
     const w = panel.offsetWidth, h = panel.offsetHeight, m = 8;
-    const left = Math.max(m, Math.min(window.innerWidth  - w - m, e.clientX - ox));
-    const top  = Math.max(m, Math.min(window.innerHeight - h - m, e.clientY - oy));
+    const left = Math.max(m, Math.min(hr.width  - w - m, e.clientX - hr.left - ox));
+    const top  = Math.max(m, Math.min(hr.height - h - m, e.clientY - hr.top  - oy));
     panel.style.setProperty("left",  `${left}px`, "important");
     panel.style.setProperty("top",   `${top}px`,  "important");
     panel.style.setProperty("right", "auto", "important");
@@ -2237,11 +2260,13 @@ closeBtn.onclick = () => { disarm(); panel.style.display = "none"; };
 })();
 (function clampOnResize() {
   const clamp = () => {
-    const r = panel.getBoundingClientRect(), m = 8;
-    if (r.right  > window.innerWidth  - m) panel.style.setProperty("left", `${Math.max(m, window.innerWidth  - r.width  - m)}px`, "important");
-    if (r.bottom > window.innerHeight - m) panel.style.setProperty("top",  `${Math.max(m, window.innerHeight - r.height - m)}px`, "important");
-    if (r.left < m) panel.style.setProperty("left", `${m}px`, "important");
-    if (r.top  < m) panel.style.setProperty("top",  `${m}px`, "important");
+    const hr = _panelHost.getBoundingClientRect();
+    const w = panel.offsetWidth, h = panel.offsetHeight, m = 8;
+    const cl = panel.offsetLeft, ct = panel.offsetTop;
+    if (cl + w > hr.width  - m) panel.style.setProperty("left", `${Math.max(m, hr.width  - w - m)}px`, "important");
+    if (ct + h > hr.height - m) panel.style.setProperty("top",  `${Math.max(m, hr.height - h - m)}px`, "important");
+    if (cl < m) panel.style.setProperty("left", `${m}px`, "important");
+    if (ct < m) panel.style.setProperty("top",  `${m}px`, "important");
   };
   window.addEventListener("resize", clamp);
 })();
@@ -2439,8 +2464,10 @@ function applyFilter() {
 function showContextMenu(x, y, tpl) {
   hideContextMenu();
   const menu = document.createElement("div");
-  menu.className = "st-ctx-menu";
-  menu.style.left = `${x}px`; menu.style.top = `${y}px`;
+  menu.className = "st-ctx-menu excali-floating-panel";
+  // x/y are viewport coords (clientX/Y) → translate to host-relative.
+  const _hr = _panelHost.getBoundingClientRect();
+  menu.style.left = `${x - _hr.left}px`; menu.style.top = `${y - _hr.top}px`;
   const items = [
     [isFav(tpl.path) ? "Unfavorite" : "Favorite ★", () => toggleFav(tpl.path)],
     ["Insert at center", () => insertAtCenter(tpl)],
@@ -2456,7 +2483,7 @@ function showContextMenu(x, y, tpl) {
     const it = menu.createDiv({ cls: "st-ctx-item", text: label });
     it.onclick = () => { hideContextMenu(); fn(); };
   }
-  document.body.appendChild(menu);
+  _panelHost.appendChild(menu);
   CTX_MENU = menu;
   setTimeout(() => {
     const off = (ev) => {
@@ -2478,22 +2505,25 @@ function cancelHoverPreview() {
 }
 function showHoverPreview(tpl, anchorEl) {
   const div = document.createElement("div");
-  div.className = "st-preview";
+  div.className = "st-preview excali-floating-panel";
   const svg = renderThumb(tpl.elements, 240, 180, 12);
   div.innerHTML = svg + `<div class='st-preview-name'>${tpl.name}</div>`;
-  document.body.appendChild(div);
+  _panelHost.appendChild(div);
   const r = anchorEl.getBoundingClientRect();
+  const hr = _panelHost.getBoundingClientRect();
   const pw = div.offsetWidth;
   const ph = div.offsetHeight;
   const margin = 8;
-  const vw = window.innerWidth, vh = window.innerHeight;
-  let left = r.left - pw - 10;
-  if (left < margin) left = r.right + 10;
-  if (left + pw > vw - margin) left = vw - pw - margin;
+  // host-relative anchor coords
+  const aLeft = r.left - hr.left, aRight = r.right - hr.left;
+  const aTop = r.top - hr.top, aBottom = r.bottom - hr.top;
+  let left = aLeft - pw - 10;
+  if (left < margin) left = aRight + 10;
+  if (left + pw > hr.width - margin) left = hr.width - pw - margin;
   if (left < margin) left = margin;
-  let top = r.top + r.height / 2 - ph / 2;
+  let top = aTop + (aBottom - aTop) / 2 - ph / 2;
   if (top < margin) top = margin;
-  if (top + ph > vh - margin) top = vh - ph - margin;
+  if (top + ph > hr.height - margin) top = hr.height - ph - margin;
   div.style.left = `${left}px`;
   div.style.top  = `${top}px`;
   PREVIEW_EL = div;
@@ -2529,8 +2559,9 @@ const resizeH = panel.createDiv({ cls: "st-resize", attr: { title: "Drag to resi
   });
   window.addEventListener("mousemove", (e) => {
     if (!resizing) return;
-    const w = Math.max(190, Math.min(window.innerWidth - 20, sw + e.clientX - sx));
-    const h = Math.max(220, Math.min(window.innerHeight - 20, sh + e.clientY - sy));
+    const hr = _panelHost.getBoundingClientRect();
+    const w = Math.max(190, Math.min(hr.width  - 20, sw + e.clientX - sx));
+    const h = Math.max(220, Math.min(hr.height - 20, sh + e.clientY - sy));
     panel.style.setProperty("width",      `${w}px`, "important");
     panel.style.setProperty("max-height", `${h}px`, "important");
     cfg.panelW = w; cfg.panelH = h;

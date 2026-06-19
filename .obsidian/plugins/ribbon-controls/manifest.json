@@ -1,0 +1,10 @@
+{
+  "id": "ribbon-controls",
+  "name": "Ribbon Controls",
+  "version": "1.0.0",
+  "minAppVersion": "1.4.0",
+  "description": "Adds Settings toggle and Vault switcher icons to the left ribbon.",
+  "author": "ati",
+  "authorUrl": "",
+  "isDesktopOnly": true
+}

@@ -1,6 +1,6 @@
 [
   {
-    "id": "f3869fafae5748adb8a3",
+    "id": "12dfb78013734691a4eb",
     "type": "rectangle",
     "x": 0,
     "y": 50,
@@ -19,18 +19,18 @@
     "roundness": {
       "type": 3
     },
-    "seed": 412226819,
+    "seed": 2126501733,
     "version": 1,
-    "versionNonce": 61968588,
+    "versionNonce": 255024515,
     "isDeleted": false,
     "boundElements": null,
-    "updated": 1780616719776,
+    "updated": 1781651652142,
     "link": null,
     "locked": false,
     "customData": null
   },
   {
-    "id": "713f2ab3394440ec8c06",
+    "id": "b190ce5c57844fee94ea",
     "type": "ellipse",
     "x": 25,
     "y": 0,
@@ -47,12 +47,12 @@
     "groupIds": [],
     "frameId": null,
     "roundness": null,
-    "seed": 1682697954,
+    "seed": 2085245556,
     "version": 1,
-    "versionNonce": 2102833872,
+    "versionNonce": 812673706,
     "isDeleted": false,
     "boundElements": null,
-    "updated": 1780616719776,
+    "updated": 1781651652142,
     "link": null,
     "locked": false,
     "customData": null

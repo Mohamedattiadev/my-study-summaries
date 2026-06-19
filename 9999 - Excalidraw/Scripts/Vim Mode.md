@@ -141,24 +141,30 @@ document.getElementById(STYLE_ID)?.remove();
 // ---------- shared state (var for TDZ safety — hoisted helpers read it) ----------
 var globalBadge = null;
 var badgeRaf = 0;
+var globalBadgeMo = null;
 
 function positionBadge() { /* no-op: badge is now absolute-positioned inside the excalidraw container, scrolls/clips with the view */ }
 
 function installGlobalBadge(on) {
-  document.querySelectorAll("." + STATUS_CLASS).forEach(n => n.remove());
+  // Tear down any prior badge / observer first.
+  removeGlobalBadge();
 
+  // Native ToolIcon-shaped button matching the zoom + / - / undo / redo
+  // size (ToolIcon_size_medium). Mounted as a sibling of undo/redo so
+  // it lives in the natural footer-left flow.
+  // Free-floating badge anchored to canvas bottom-center. Per-frame
+  // rAF tick keeps it positioned across canvas resize, zen-mode, leaf
+  // switch (hides when not on active leaf).
   const b = document.createElement("button");
   b.className = STATUS_CLASS;
   b.type = "button";
   b.setAttribute("aria-label", on ? "Vim Mode ON" : "Vim Mode OFF");
-  // Native ToolIcon: 20vb svg, stroke=var(--icon-fill-color), no fill, thin stroke.
+  b.title = on ? "Vim Mode ON - click to disable" : "Vim Mode OFF - click to enable";
   b.textContent = "VIM";
-  const label = on ? "Vim Mode ON - click to disable" : "Vim Mode OFF - click to enable";
-  b.title = label;
   Object.assign(b.style, {
     position: "fixed",
     zIndex: "50",
-    display: "inline-flex",
+    display: "inline-block",
     alignItems: "center",
     justifyContent: "center",
     height: "20px",
@@ -168,7 +174,8 @@ function installGlobalBadge(on) {
     fontSize: "10px",
     fontWeight: "700",
     letterSpacing: "1px",
-    lineHeight: "1",
+    lineHeight: "20px",
+    textAlign: "center",
     borderRadius: "var(--border-radius-md, 6px)",
     background: on ? "var(--color-primary, #6965db)" : "var(--island-bg-color, var(--background-primary))",
     color: on ? "var(--color-on-primary, #fff)" : "var(--icon-fill-color, var(--text-muted))",
@@ -179,22 +186,6 @@ function installGlobalBadge(on) {
     opacity: on ? "1" : "0.7",
     pointerEvents: "auto",
     transition: "background 0.15s, opacity 0.15s",
-  });
-  b.addEventListener("mouseenter", () => {
-    if (on) {
-      b.style.background = "var(--color-primary-darker, #5b57c2)";
-    } else {
-      b.style.background = "var(--color-primary-light, rgba(105,101,219,0.18))";
-      b.style.color = "var(--color-primary, #6965db)";
-    }
-  });
-  b.addEventListener("mouseleave", () => {
-    if (on) {
-      b.style.background = "var(--color-primary, #6965db)";
-    } else {
-      b.style.background = "var(--island-bg-color, var(--background-primary))";
-      b.style.color = "var(--icon-fill-color, var(--text-muted))";
-    }
   });
   b.addEventListener("wheel", (e) => {
     const c = view.contentEl.querySelector("canvas.interactive");
@@ -219,8 +210,6 @@ function installGlobalBadge(on) {
   };
   document.body.appendChild(b);
   globalBadge = b;
-  // Per-frame: hide when this view isn't the active leaf; otherwise anchor
-  // to the canvas bottom-center. Cheap (one rect read + 3 style writes).
   const tick = () => {
     if (!globalBadge || !document.body.contains(globalBadge)) return;
     const isActive = app.workspace.activeLeaf?.view === view && view.contentEl?.isConnected;
@@ -239,7 +228,10 @@ function installGlobalBadge(on) {
 }
 
 function removeGlobalBadge() {
+  try { globalBadgeMo?.disconnect(); } catch (_) {}
+  globalBadgeMo = null;
   try { cancelAnimationFrame(badgeRaf); } catch (_) {}
+  view?.contentEl?.querySelectorAll("." + STATUS_CLASS).forEach(n => n.remove());
   try { globalBadge?.remove(); } catch (_) {}
   globalBadge = null;
 }

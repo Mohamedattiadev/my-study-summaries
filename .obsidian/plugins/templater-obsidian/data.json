@@ -39,7 +39,9 @@
     "9999 - Excalidraw/Scripts/TemplateOfTemplator/voice-text-startup.md",
     "9999 - Excalidraw/Scripts/TemplateOfTemplator/vim-mode-startup.md",
     "9999 - Excalidraw/Scripts/TemplateOfTemplator/resize-pills-startup.md",
-    "9999 - Excalidraw/Scripts/TemplateOfTemplator/zoom-box-startup.md"
+    "9999 - Excalidraw/Scripts/TemplateOfTemplator/zoom-box-startup.md",
+    "9999 - Excalidraw/Scripts/TemplateOfTemplator/paper-mode-startup.md",
+    "9999 - Excalidraw/Scripts/TemplateOfTemplator/pen-styles-startup.md"
   ],
   "intellisense_render": 1,
   "ignore_folders_on_creation": [

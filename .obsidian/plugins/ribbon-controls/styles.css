@@ -1,0 +1,80 @@
+/* Hide pinned icons until moved into .side-dock-settings (prevents top-of-ribbon flicker on startup). */
+body:not(.ribbon-controls-ready) .ribbon-controls-pinned {
+  display: none !important;
+}
+
+/* ---------- Status bar compaction ---------- */
+
+.status-bar {
+  font-size: 11px;
+  gap: 4px;
+  padding: 0 6px;
+  align-items: center;
+}
+
+.status-bar .status-bar-item {
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1;
+}
+
+.status-bar .status-bar-item svg.svg-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.status-bar .status-bar-item .status-bar-item-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.status-bar .status-bar-item .status-bar-item-segment {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Word count: keep words, drop character count. */
+.status-bar-item.plugin-word-count .status-bar-item-segment:nth-child(2) {
+  display: none;
+}
+
+/* Backlink: shorten "N backlinks" to icon + number. */
+.status-bar-item.plugin-backlink {
+  font-size: 0;
+}
+.status-bar-item.plugin-backlink::before {
+  content: "🔗";
+  font-size: 11px;
+}
+.status-bar-item.plugin-backlink::after {
+  content: " " attr(data-count);
+  font-size: 11px;
+}
+
+/* LiveSync: trim long status text. */
+.status-bar-item.plugin-obsidian-livesync {
+  font-size: 10px;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Video Share + Slide Remote: shrink labels. */
+.status-bar-item.plugin-video-share,
+.status-bar-item.plugin-slide-remote {
+  font-size: 10px;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Sync (built-in): icon only, no padding. */
+.status-bar-item.plugin-sync {
+  padding: 0 4px;
+}

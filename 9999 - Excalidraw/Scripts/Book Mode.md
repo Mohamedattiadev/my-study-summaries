@@ -419,11 +419,27 @@ async function exportPDF() {
   }
 }
 
-// ---------- shared float-panel z-index stack ----------
+// ---------- shared float-panel z-index stack + modal-aware auto-hide ----------
+const PANEL_Z_BASE = 50;
+const PANEL_Z_MAX  = 70;
 function cfRaisePanel(el) {
   if (!el) return;
-  if (typeof window.__excaliPanelZ !== "number") window.__excaliPanelZ = 1000;
-  el.style.zIndex = String(++window.__excaliPanelZ);
+  if (typeof window.__excaliPanelZ !== "number") window.__excaliPanelZ = PANEL_Z_BASE;
+  window.__excaliPanelZ = window.__excaliPanelZ >= PANEL_Z_MAX ? PANEL_Z_BASE : window.__excaliPanelZ + 1;
+  el.style.zIndex = String(window.__excaliPanelZ);
+}
+if (!window.__excaliPanelSuppressInstalled) {
+  window.__excaliPanelSuppressInstalled = true;
+  const _s = document.createElement("style");
+  _s.id = "excali-panel-suppress-style";
+  _s.textContent = `body.excali-modal-open .excali-floating-panel { display: none !important; }`;
+  document.head.appendChild(_s);
+  const _update = () => {
+    const open = !!document.querySelector("body > .modal-container, body > .suggestion-container, body > .prompt");
+    document.body.classList.toggle("excali-modal-open", open);
+  };
+  new MutationObserver(_update).observe(document.body, { childList: true });
+  _update();
 }
 
 // ---------- UI panel ----------
@@ -440,14 +456,14 @@ if (!document.getElementById(STYLE_ID)) {
   styleTag.id = STYLE_ID;
   styleTag.textContent = `
     #${PANEL_ID} {
-      position: fixed; top: 140px; right: 80px;
+      position: absolute; top: 80px; right: 16px;
       width: 280px; max-height: 80vh;
       padding: 12px 14px;
       background: var(--background-primary);
       border: 1px solid var(--background-modifier-border);
       border-radius: 12px;
       box-shadow: 0 6px 24px rgba(0,0,0,0.28);
-      z-index: 1000; font-size: 13px;
+      z-index: 50; font-size: 13px;
       font-family: var(--font-interface);
       display: flex; flex-direction: column; gap: 0;
     }
@@ -547,13 +563,13 @@ if (!document.getElementById(STYLE_ID)) {
     #${PANEL_ID} .bm-page-chip:hover { border-color: var(--interactive-accent); transform: scale(1.1); }
 
     .bm-popover {
-      position: fixed;
+      position: absolute;
       background: var(--background-primary);
       border: 1px solid var(--background-modifier-border);
       border-radius: 8px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.3);
       padding: 10px 12px;
-      z-index: 2147483647;
+      z-index: 65;
       min-width: 200px;
       font-family: var(--font-interface); font-size: 13px;
     }
@@ -623,7 +639,13 @@ if (!document.getElementById(STYLE_ID)) {
 
 panel = document.createElement("div");
 panel.id = PANEL_ID;
-document.body.appendChild(panel);
+panel.classList.add("excali-floating-panel");
+const _panelHost =
+  view.contentEl.querySelector(".excalidraw") || view.contentEl;
+if (_panelHost && getComputedStyle(_panelHost).position === "static") {
+  _panelHost.style.position = "relative";
+}
+_panelHost.appendChild(panel);
 cfRaisePanel(panel);
 panel.addEventListener("mousedown", () => cfRaisePanel(panel), true);
 
@@ -649,9 +671,10 @@ header.style.userSelect = "none";
   });
   window.addEventListener("mousemove", (e) => {
     if (!dragging) return;
+    const hr = _panelHost.getBoundingClientRect();
     const w = panel.offsetWidth, h = panel.offsetHeight, m = 8;
-    const left = Math.max(m, Math.min(window.innerWidth  - w - m, e.clientX - ox));
-    const top  = Math.max(m, Math.min(window.innerHeight - h - m, e.clientY - oy));
+    const left = Math.max(m, Math.min(hr.width  - w - m, e.clientX - hr.left - ox));
+    const top  = Math.max(m, Math.min(hr.height - h - m, e.clientY - hr.top  - oy));
     panel.style.left = `${left}px`;
     panel.style.top  = `${top}px`;
     panel.style.right = "auto";
@@ -662,11 +685,13 @@ header.style.userSelect = "none";
 })();
 (function clampOnResize() {
   const clamp = () => {
-    const r = panel.getBoundingClientRect(), m = 8;
-    if (r.right  > window.innerWidth  - m) panel.style.left = `${Math.max(m, window.innerWidth  - r.width  - m)}px`;
-    if (r.bottom > window.innerHeight - m) panel.style.top  = `${Math.max(m, window.innerHeight - r.height - m)}px`;
-    if (r.left < m) panel.style.left = `${m}px`;
-    if (r.top  < m) panel.style.top  = `${m}px`;
+    const hr = _panelHost.getBoundingClientRect();
+    const w = panel.offsetWidth, h = panel.offsetHeight, m = 8;
+    const cl = panel.offsetLeft, ct = panel.offsetTop;
+    if (cl + w > hr.width  - m) panel.style.left = `${Math.max(m, hr.width  - w - m)}px`;
+    if (ct + h > hr.height - m) panel.style.top  = `${Math.max(m, hr.height - h - m)}px`;
+    if (cl < m) panel.style.left = `${m}px`;
+    if (ct < m) panel.style.top  = `${m}px`;
   };
   window.addEventListener("resize", clamp);
 })();
@@ -870,7 +895,7 @@ function popoverOutsideClick(e) {
 function openPaperPopover(pageEl, anchorRect) {
   closePopover();
   const pop = document.createElement("div");
-  pop.className = "bm-popover";
+  pop.className = "bm-popover excali-floating-panel";
   pop.innerHTML = `<div class="bm-pop-title">Paper</div>`;
   const row = document.createElement("div");
   row.className = "bm-pop-row";
@@ -886,13 +911,14 @@ function openPaperPopover(pageEl, anchorRect) {
   col.value = pageEl.customData?.paperColor || cfg.defaultColor;
   row.appendChild(sel); row.appendChild(col);
   pop.appendChild(row);
-  document.body.appendChild(pop);
+  _panelHost.appendChild(pop);
 
   const popRect = pop.getBoundingClientRect();
-  let x = anchorRect.left;
-  let y = anchorRect.bottom + 4;
-  if (x + popRect.width > window.innerWidth - 8) x = window.innerWidth - popRect.width - 8;
-  if (y + popRect.height > window.innerHeight - 8) y = anchorRect.top - popRect.height - 4;
+  const hr = _panelHost.getBoundingClientRect();
+  let x = anchorRect.left - hr.left;
+  let y = anchorRect.bottom - hr.top + 4;
+  if (x + popRect.width > hr.width - 8) x = hr.width - popRect.width - 8;
+  if (y + popRect.height > hr.height - 8) y = anchorRect.top - hr.top - popRect.height - 4;
   pop.style.left = `${x}px`; pop.style.top = `${y}px`;
 
   const apply = async () => {

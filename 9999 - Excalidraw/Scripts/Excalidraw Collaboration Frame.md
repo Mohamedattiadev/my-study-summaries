@@ -409,6 +409,8 @@ function teardownOverlays() {
 }
 
 function paintOverlay(view, api, container) {
+  // Bail if view torn down (interval may still fire after leaf swap).
+  if (!view || !view.contentEl || !api?.getSceneElements) { teardownOverlays(); return; }
   const sceneEls = (api.getSceneElements() || []).filter(
     e => !e.isDeleted && e.customData?.collabSessionId
   );
@@ -720,7 +722,7 @@ document.getElementById(STYLE_ID)?.remove();
       --cf-shadow:  0 8px 22px rgba(0,0,0,0.55);
     }
     #${BAR_ID} {
-      position: fixed; top: 96px; right: 4px;
+      position: absolute; top: 96px; right: 4px;
       display: flex; flex-direction: column; gap: 5px;
       padding: 7px 5px;
       background: linear-gradient(180deg,
@@ -860,8 +862,9 @@ document.getElementById(STYLE_ID)?.remove();
 
     /* Options modal — compact, glassy */
     #${MODAL_ID} {
-      position: fixed; top: 80px; right: 90px;
-      width: 360px; max-height: 82vh; overflow-y: auto;
+      position: absolute; top: 80px; right: 90px;
+      width: 360px; max-height: calc(100vh - 120px);
+      display: flex; flex-direction: column;
       padding: 0;
       background: color-mix(in srgb, var(--cf-bg) 88%, transparent);
       backdrop-filter: blur(18px) saturate(150%);
@@ -893,8 +896,16 @@ document.getElementById(STYLE_ID)?.remove();
         var(--cf-bg));
       border-bottom: 1px solid var(--cf-border);
       border-radius: 16px 16px 0 0;
+      flex-shrink: 0;
     }
-    #${MODAL_ID} .cf-mbody { padding: 10px 14px 14px; }
+    #${MODAL_ID} .cf-mbody {
+      padding: 10px 14px 14px;
+      flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
+    }
+    #${MODAL_ID} .cf-sess-list {
+      max-height: 200px; overflow-y: auto; overflow-x: hidden;
+      padding-right: 2px;
+    }
     #${MODAL_ID} .cf-mtitle {
       font-weight: 600; font-size: 13px;
       display: flex; align-items: center; gap: 6px;
@@ -1097,13 +1108,21 @@ let bar = null;
 // ---------- build bar ----------
 bar = document.createElement("div");
 bar.id = BAR_ID;
-document.body.appendChild(bar);
-// Clamp saved coords into viewport — stale values from the old
-// stretched-bar bug could be huge and park the bar off-screen.
+// Mount inside .excalidraw host so bar stays inside canvas area (matches
+// Book Mode pattern). position:absolute resolves against this host.
+const _barHost =
+  view.contentEl.querySelector(".excalidraw") || view.contentEl;
+if (_barHost && getComputedStyle(_barHost).position === "static") {
+  _barHost.style.position = "relative";
+}
+_barHost.appendChild(bar);
+// Clamp saved coords into host rect — stale values from the old
+// stretched-bar bug or prior viewport-based persists could park the bar
+// off-screen.
 {
-  const vw = window.innerWidth, vh = window.innerHeight;
+  const hr = _barHost.getBoundingClientRect();
   const ok = (v, max) => typeof v === "number" && v >= 0 && v <= max - 40;
-  if (!ok(cfg.barLeft, vw) || !ok(cfg.barTop, vh)) {
+  if (!ok(cfg.barLeft, hr.width) || !ok(cfg.barTop, hr.height)) {
     cfg.barLeft = null; cfg.barTop = null;
     state.dirty = true; persistCfgSoon();
   }
@@ -1114,6 +1133,18 @@ if (cfg.barLeft != null && cfg.barTop != null) {
   bar.style.right = "auto";
   bar.style.transform = "none";
 }
+// Clamp into host post-mount + on resize so bar never leaks past canvas.
+const _clampBar = () => {
+  const hr = _barHost.getBoundingClientRect();
+  const w = bar.offsetWidth, h = bar.offsetHeight, m = 4;
+  let cl = bar.offsetLeft, ct = bar.offsetTop;
+  if (cl + w > hr.width  - m) bar.style.left = `${Math.max(m, hr.width  - w - m)}px`;
+  if (ct + h > hr.height - m) bar.style.top  = `${Math.max(m, hr.height - h - m)}px`;
+  if (cl < m) bar.style.left = `${m}px`;
+  if (ct < m) bar.style.top  = `${m}px`;
+};
+requestAnimationFrame(_clampBar);
+window.addEventListener("resize", _clampBar);
 
 // drag bar by header area (whole bar background is draggable; click on
 // pill children still fires their own onclick because we only start
@@ -1133,8 +1164,13 @@ if (cfg.barLeft != null && cfg.barTop != null) {
   window.addEventListener("mousemove", (e) => {
     if (!dragging) return;
     moved = true;
-    bar.style.left = `${e.clientX - ox}px`;
-    bar.style.top  = `${e.clientY - oy}px`;
+    const hr = _barHost.getBoundingClientRect();
+    const w = bar.offsetWidth, h = bar.offsetHeight, m = 4;
+    // host-relative + clamp so bar can't escape canvas while dragging.
+    const left = Math.max(m, Math.min(hr.width  - w - m, e.clientX - hr.left - ox));
+    const top  = Math.max(m, Math.min(hr.height - h - m, e.clientY - hr.top  - oy));
+    bar.style.left = `${left}px`;
+    bar.style.top  = `${top}px`;
     bar.style.right = "auto";
     bar.style.transform = "none";
   });
@@ -1143,9 +1179,9 @@ if (cfg.barLeft != null && cfg.barTop != null) {
     dragging = false;
     bar.classList.remove("is-dragging");
     if (moved) {
-      const r = bar.getBoundingClientRect();
-      cfg.barLeft = Math.round(r.left);
-      cfg.barTop  = Math.round(r.top);
+      // Persist host-relative offsets, not viewport coords.
+      cfg.barLeft = bar.offsetLeft;
+      cfg.barTop  = bar.offsetTop;
       state.dirty = true; persistCfgSoon();
     }
   });
@@ -1305,13 +1341,35 @@ function openModal() {
 function buildModal() {
   const modal = document.createElement("div");
   modal.id = MODAL_ID;
-  document.body.appendChild(modal);
+  // Mount inside .excalidraw host so position:absolute keeps modal inside
+  // the canvas area (matches Book Mode pattern). Falls back to contentEl.
+  const _modalHost =
+    view.contentEl.querySelector(".excalidraw") || view.contentEl;
+  if (_modalHost && getComputedStyle(_modalHost).position === "static") {
+    _modalHost.style.position = "relative";
+  }
+  _modalHost.appendChild(modal);
   // Restore last drag position so the modal stays where the user left it.
   if (cfg.modalLeft != null && cfg.modalTop != null) {
     modal.style.left = `${cfg.modalLeft}px`;
     modal.style.top  = `${cfg.modalTop}px`;
     modal.style.right = "auto";
   }
+  // Clamp into host after mount + on resize so the modal never overflows.
+  const _clampModal = () => {
+    const hr = _modalHost.getBoundingClientRect();
+    const w = modal.offsetWidth, h = modal.offsetHeight, m = 8;
+    let cl = modal.offsetLeft, ct = modal.offsetTop;
+    if (cl + w > hr.width  - m) modal.style.left = `${Math.max(m, hr.width  - w - m)}px`;
+    if (ct + h > hr.height - m) modal.style.top  = `${Math.max(m, hr.height - h - m)}px`;
+    if (cl < m) modal.style.left = `${m}px`;
+    if (ct < m) modal.style.top  = `${m}px`;
+  };
+  requestAnimationFrame(_clampModal);
+  const _onResize = () => _clampModal();
+  window.addEventListener("resize", _onResize);
+  const _origRemove = modal.remove.bind(modal);
+  modal.remove = () => { window.removeEventListener("resize", _onResize); _origRemove(); };
 
   // Header
   const header = modal.createDiv({ cls: "cf-mhd" });
@@ -1336,17 +1394,22 @@ function buildModal() {
     const mv = (e) => {
       if (!dragging) return;
       moved = true;
-      modal.style.left = `${e.clientX - ox}px`;
-      modal.style.top  = `${e.clientY - oy}px`;
+      const hr = _modalHost.getBoundingClientRect();
+      const w = modal.offsetWidth, h = modal.offsetHeight, m = 8;
+      // host-relative coords + clamp inside host so modal can't leave canvas.
+      const left = Math.max(m, Math.min(hr.width  - w - m, e.clientX - hr.left - ox));
+      const top  = Math.max(m, Math.min(hr.height - h - m, e.clientY - hr.top  - oy));
+      modal.style.left = `${left}px`;
+      modal.style.top  = `${top}px`;
       modal.style.right = "auto";
     };
     const up = () => {
       if (!dragging) return;
       dragging = false; header.style.cursor = "grab";
       if (moved) {
-        const r = modal.getBoundingClientRect();
-        cfg.modalLeft = Math.round(r.left);
-        cfg.modalTop  = Math.round(r.top);
+        // Persist host-relative offsets, not viewport coords.
+        cfg.modalLeft = modal.offsetLeft;
+        cfg.modalTop  = modal.offsetTop;
         state.dirty = true; persistCfgSoon();
       }
     };
@@ -1438,7 +1501,7 @@ function buildModal() {
       }
     );
     headRow.appendChild(delAll);
-    const listHost = sec.createDiv();
+    const listHost = sec.createDiv({ cls: "cf-sess-list" });
     renderSessionList(listHost);
     sec.dataset.host = "sessions";
     modal._sessionHost = listHost;

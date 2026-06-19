@@ -43,9 +43,12 @@ var PEN_ICONS = {
   "Native iPad": `<rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>`,
   "Mask Highlighter": `<path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4l8 8z"/>`
 };
-function penIconSvg(name, color) {
+function penIconSvg(name, _color) {
   const body = PEN_ICONS[name] || PEN_ICONS["Fine Pen"];
-  return `<svg viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+  // Native Excalidraw ToolIcon SVG markup: stroke=var(--icon-fill-color) +
+  // <g stroke-width="1.5"> wrapper. Lets native .ToolIcon[checked] CSS paint
+  // the icon white-on-primary identically to shape buttons.
+  return `<svg aria-hidden="true" focusable="false" role="img" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke="var(--icon-fill-color)" stroke-linecap="round" stroke-linejoin="round"><g stroke-width="1.5">${body}</g></svg>`;
 }
 
 // Native Apple Pencil feel: simulatePressure:false, low streamline+smoothing.
@@ -118,9 +121,8 @@ var BUILTIN_PRESETS = {
 var DEFAULTS = {
   active: "Native iPad",
   width:  null, color: null, opacity: null,
-  customPresets: {}, fineOpen: false,
+  customPresets: {},
   paperFeel: false,
-  maskOpen: false,
   maskColor: "#ffd54f",   // saturated highlighter yellow so 100% opacity covers
   maskOpacity: 100,       // 100 = fully covers content underneath when "shown"
   maskWidth: 18
@@ -128,21 +130,27 @@ var DEFAULTS = {
 
 var MASK_TAG = "maskLayer";
 
-// Inline Lucide icons (24x24 → scaled via CSS to 13px for buttons, 11px for chev).
+// Inline Lucide icons rendered with native Excalidraw ToolIcon SVG chrome:
+// stroke=var(--icon-fill-color) + <g stroke-width="1.5"> wrapper so native
+// [checked]/hover CSS rules pick them up identically to shape buttons.
+function _ni(body) {
+  return `<svg aria-hidden="true" focusable="false" role="img" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke="var(--icon-fill-color)" stroke-linecap="round" stroke-linejoin="round"><g stroke-width="1.5">${body}</g></svg>`;
+}
 var ICON = {
-  play:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>`,
-  undo:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>`,
-  save:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`,
-  eye:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></svg>`,
-  eyeOff:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>`,
-  refresh: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7l3 2.7"/><path d="M21 4v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 20v-5h5"/></svg>`,
-  trash:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
-  pen:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg>`,
-  stop:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>`,
-  paper:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" x2="16" y1="13" y2="13"/><line x1="8" x2="16" y1="17" y2="17"/></svg>`,
-  sliders: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>`,
-  mask:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4l8 8z"/></svg>`,
-  chev:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`
+  play:    _ni(`<polygon points="6 3 20 12 6 21 6 3"/>`),
+  undo:    _ni(`<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/>`),
+  save:    _ni(`<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>`),
+  eye:     _ni(`<path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/>`),
+  eyeOff:  _ni(`<path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/>`),
+  refresh: _ni(`<path d="M3 12a9 9 0 0 1 15-6.7l3 2.7"/><path d="M21 4v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 20v-5h5"/>`),
+  trash:   _ni(`<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>`),
+  pen:     _ni(`<path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/>`),
+  stop:    _ni(`<rect x="6" y="6" width="12" height="12" rx="2"/>`),
+  paper:   _ni(`<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" x2="16" y1="13" y2="13"/><line x1="8" x2="16" y1="17" y2="17"/>`),
+  sliders: _ni(`<line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/>`),
+  mask:    _ni(`<path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4l8 8z"/>`),
+  chev:    _ni(`<polyline points="9 18 15 12 9 6"/>`),
+  pin:     _ni(`<path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>`)
 };
 function ico(k, cls = "ps-ico") { return `<span class="${cls}">${ICON[k]}</span>`; }
 
@@ -340,6 +348,10 @@ function applyActivePen() {
       currentItemBackgroundColor: "transparent"
     }
   });
+  // Time-window suppress so our tool watcher doesn't auto-close panel
+  // when applyActivePen switches to freedraw (see learnings/bugs-and-
+  // fixes.md — onChange fires multiple times per setActiveTool).
+  if (state) state.suppressUntil = Date.now() + 300;
   api.setActiveTool({ type: "freedraw" });
   installEscToSelection();
 }
@@ -411,6 +423,7 @@ function startMaskDraw() {
       currentItemBackgroundColor: "transparent"
     }
   });
+  if (state) state.suppressUntil = Date.now() + 300;
   api.setActiveTool({ type: "freedraw" });
   installEscToSelection();
 
@@ -458,7 +471,8 @@ function startMaskDraw() {
     });
     if (changed) {
       api.updateScene({ elements: next, commitToHistory: false });
-      if (typeof refreshMaskStatus === "function") refreshMaskStatus();
+      if (typeof notifyMaskChange === "function") notifyMaskChange();
+      else if (typeof refreshMaskStatus === "function") refreshMaskStatus();
     }
   };
 
@@ -511,6 +525,7 @@ async function setMasksVisible(visible) {
     opacity: visOpacity(el, visible),
     customData: { ...(el.customData || {}), maskState: visible ? "visible" : "hidden" }
   }));
+  if (typeof notifyMaskChange === "function") notifyMaskChange();
   new Notice(`${masks.length} mask(s) ${visible ? "shown" : "hidden"}`);
 }
 async function setMaskVisible(m, visible) {
@@ -519,6 +534,7 @@ async function setMaskVisible(m, visible) {
     opacity: visOpacity(el, visible),
     customData: { ...(el.customData || {}), maskState: visible ? "visible" : "hidden" }
   }));
+  if (typeof notifyMaskChange === "function") notifyMaskChange();
 }
 async function setMaskColor(m, color) {
   mapScene(new Set([m.id]), el => ({
@@ -526,11 +542,13 @@ async function setMaskColor(m, color) {
     strokeColor: color,
     customData: { ...(el.customData || {}), maskTint: color }
   }));
+  if (typeof notifyMaskChange === "function") notifyMaskChange();
 }
 async function deleteMask(m) {
   const elements = api.getSceneElements() || [];
   const next = elements.filter(el => el.id !== m.id);
   api.updateScene({ elements: next, commitToHistory: true });
+  if (typeof notifyMaskChange === "function") notifyMaskChange();
 }
 async function toggleMasks() {
   const masks = getAllMasks();
@@ -545,6 +563,7 @@ async function clearAllMasks() {
   const elements = api.getSceneElements() || [];
   const next = elements.filter(el => !ids.has(el.id));
   api.updateScene({ elements: next, commitToHistory: true });
+  if (typeof notifyMaskChange === "function") notifyMaskChange();
   new Notice(`Cleared ${masks.length} mask(s)`);
 }
 
@@ -710,11 +729,30 @@ async function clearAllMasks() {
   window.__penStylesMaskTap = { host: hostEl, down: onDown, move: onMove, up: onUp, click: onClickLike };
 })();
 
-// ---------- shared float-panel z-index stack ----------
+// ---------- shared float-panel z-index stack + modal-aware auto-hide ----------
+// Base 50 keeps panels BELOW Obsidian sidebars/tabs/topbar/status-bar.
+// Modal/palette open => toggle body.excali-modal-open => CSS hides every
+// element tagged .excali-floating-panel. Position + state preserved.
+const PANEL_Z_BASE = 50;
+const PANEL_Z_MAX  = 70;
 function cfRaisePanel(el) {
   if (!el) return;
-  if (typeof window.__excaliPanelZ !== "number") window.__excaliPanelZ = 1000;
-  el.style.zIndex = String(++window.__excaliPanelZ);
+  if (typeof window.__excaliPanelZ !== "number") window.__excaliPanelZ = PANEL_Z_BASE;
+  window.__excaliPanelZ = window.__excaliPanelZ >= PANEL_Z_MAX ? PANEL_Z_BASE : window.__excaliPanelZ + 1;
+  el.style.zIndex = String(window.__excaliPanelZ);
+}
+if (!window.__excaliPanelSuppressInstalled) {
+  window.__excaliPanelSuppressInstalled = true;
+  const _s = document.createElement("style");
+  _s.id = "excali-panel-suppress-style";
+  _s.textContent = `body.excali-modal-open .excali-floating-panel { display: none !important; }`;
+  document.head.appendChild(_s);
+  const _update = () => {
+    const open = !!document.querySelector("body > .modal-container, body > .suggestion-container, body > .prompt");
+    document.body.classList.toggle("excali-modal-open", open);
+  };
+  new MutationObserver(_update).observe(document.body, { childList: true });
+  _update();
 }
 
 // =========================================================================================
@@ -726,18 +764,17 @@ window.__penStylesOpenFine = false;
 
 if (panel) {
   const hidden = panel.style.display === "none";
-  if (wantFine) {
-    panel.style.display = "";
-    if (typeof panel.__setFineOpen === "function") panel.__setFineOpen(true);
+  const wantOpen = wantFine || hidden;
+  if (wantOpen) {
+    if (typeof window.openPenSidePanel === "function") window.openPenSidePanel();
+    else panel.style.display = "";
+    if (wantFine && typeof panel.__openFineTune === "function") panel.__openFineTune();
     applyActivePen();
-    cfRaisePanel(panel);
   } else {
-    panel.style.display = hidden ? "" : "none";
-    if (hidden) {
-      applyActivePen();
-      cfRaisePanel(panel);
-    } else if (window.__maskHighlighter) {
-      // Hiding panel + mask was armed -> disarm to avoid orphan listener.
+    if (typeof window.closePenSidePanel === "function") window.closePenSidePanel();
+    else panel.style.display = "none";
+    if (window.__maskHighlighter) {
+      // Disarm mask draw so pointerup listener doesn't tag strokes.
       const s = window.__maskHighlighter;
       if (s.canvas && s.listener) s.canvas.removeEventListener("pointerup", s.listener, true);
       window.__maskHighlighter = null;
@@ -753,412 +790,812 @@ if (!document.getElementById(STYLE_ID)) {
   const styleTag = document.createElement("style");
   styleTag.id = STYLE_ID;
   styleTag.textContent = `
-    #${PANEL_ID} {
-      position: fixed; top: 120px; right: 80px;
-      width: 280px; padding: 12px 14px;
-      background: var(--background-primary);
-      border: 1px solid var(--background-modifier-border);
-      border-radius: 9px;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.28);
-      z-index: 1000; font-size: 11px;
-      font-family: var(--font-interface);
-      max-height: calc(100vh - 140px); overflow-y: auto;
-      touch-action: manipulation;
+    /* Outer SECTION: cap to canvas viewport height, scroll inside. Same
+       formula as Paper Mode side panel. NO chrome overrides on inner
+       panel — native .Island + .selected-shape-actions paint everything. */
+    #pen-styles-side-wrap {
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      overflow-x: hidden;
     }
-    #${PANEL_ID} .ps-ico {
-      display:inline-flex; align-items:center; justify-content:center;
-      width: 12px; height: 12px; flex-shrink:0;
-    }
-    #${PANEL_ID} .ps-ico svg { width:100%; height:100%; display:block; }
-    #${PANEL_ID}::-webkit-scrollbar { width: 6px; }
-    #${PANEL_ID}::-webkit-scrollbar-thumb { background: var(--background-modifier-border); border-radius:3px; }
-
-    #${PANEL_ID} .ps-header {
-      display:flex; align-items:center; justify-content:space-between;
-      padding-bottom:4px; margin-bottom:6px;
-      border-bottom:1px solid var(--background-modifier-border);
-      cursor: grab; user-select: none;
-    }
-    #${PANEL_ID} .ps-title {
-      font-weight:600; font-size:12px; display:flex; align-items:center; gap:5px;
-    }
-    #${PANEL_ID} .ps-title svg { color: var(--text-accent); }
-    #${PANEL_ID} .ps-close {
-      cursor:pointer; padding:0 6px; border-radius:4px; font-size:14px;
-      color: var(--text-muted);
-    }
-    #${PANEL_ID} .ps-close:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
-
-    #${PANEL_ID} .ps-label {
-      font-size: 9px; color: var(--text-muted); text-transform: uppercase;
-      letter-spacing: 0.4px; font-weight: 600;
-      margin: 4px 0 2px;
-    }
-    #${PANEL_ID} .ps-value {
-      font-size: 11px; color: var(--text-normal); font-variant-numeric: tabular-nums;
-    }
-    #${PANEL_ID} .ps-row-h {
-      display:flex; align-items:center; justify-content:space-between;
+    /* Hide sibling native selected-shape-actions while Pen Styles open. */
+    .selected-shape-actions-container.pen-styles-open > section:not(#pen-styles-side-wrap) {
+      display: none !important;
     }
 
-    /* Compact preset chips */
-    #${PANEL_ID} .ps-pen-grid {
-      display:grid; grid-template-columns: repeat(2, 1fr); gap:3px;
+    /* Layout-only rules — native .Island + .selected-shape-actions paint
+       all typography, padding, gaps, h3, fieldset chrome. Do NOT override. */
+
+    /* 3x3 pen grid — keeps 9 pens compact instead of a wider auto-flow.
+       Clamp height to ~3 rows; extra pens scroll internally instead of
+       pushing the sidebar taller. */
+    #${PANEL_ID} fieldset.ps-pen-set .buttonList {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      max-height: 130px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-right: 2px;
     }
-    #${PANEL_ID} .ps-pen-chip {
-      display:flex; align-items:center; gap:5px;
-      padding:4px 6px; border-radius:5px; cursor:pointer;
-      border:1px solid var(--background-modifier-border);
-      background: var(--background-secondary);
-      font-size: 10px; font-weight:500; color: var(--text-normal);
+    /* Hide redundant 0-label on Width/Opacity sliders — value-bubble already
+       shows current value; the two overlap when slider near minimum. */
+    #${PANEL_ID} .range-wrapper .zero-label { display: none !important; }
+    /* Combined Tools fieldset — 3-col grid (2 rows of 3) so each button
+       can show icon + small text label without overflowing. */
+    #${PANEL_ID} fieldset.ps-toolbar .buttonList {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 4px !important;
+    }
+    #${PANEL_ID} fieldset.ps-toolbar .zIndexButton {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 1px !important;
+      padding: 2px 1px !important;
+      min-width: 0 !important;
+      min-height: 34px !important;
+    }
+    #${PANEL_ID} fieldset.ps-toolbar .zIndexButton > span {
+      font-size: 0.6rem;
       line-height: 1.1;
+      white-space: normal;
+      overflow: visible;
+      max-width: 100%;
+      text-align: center;
     }
-    #${PANEL_ID} .ps-pen-chip:hover { background: var(--background-modifier-hover); }
-    #${PANEL_ID} .ps-pen-chip.is-active {
-      border-color: var(--interactive-accent); background: var(--background-modifier-hover);
-      box-shadow: inset 0 0 0 1px var(--interactive-accent);
+    #${PANEL_ID} fieldset.ps-toolbar .zIndexButton svg {
+      width: 13px;
+      height: 13px;
     }
-    #${PANEL_ID} .ps-pen-icon {
-      width:14px; height:14px; flex-shrink:0;
-      display:inline-flex; align-items:center; justify-content:center;
+    #${PANEL_ID} > * + * { margin-top: 4px !important; }
+    #${PANEL_ID} fieldset { padding: 2px 4px !important; }
+    #${PANEL_ID} .control-label { padding: 1px 0 !important; }
+
+    /* Pen preset grid — sits inside a native fieldset+legend+buttonList.
+       Only addition: relative positioning for the per-chip × delete badge. */
+    #${PANEL_ID} fieldset.ps-pen-set .ToolIcon { position: relative; }
+    /* Active pen radio: whole label gets primary fill + white svg. */
+    #${PANEL_ID} fieldset.ps-pen-set .ToolIcon:has(input:checked),
+    #${PANEL_ID} fieldset.ps-pen-set .ToolIcon:has(input:checked) .ToolIcon__icon {
+      background: var(--color-primary, var(--interactive-accent)) !important;
+      color: var(--color-on-primary, #fff) !important;
+      border-radius: var(--border-radius-lg, 4px);
     }
-    #${PANEL_ID} .ps-pen-icon svg { width:100%; height:100%; }
-    #${PANEL_ID} .ps-pen-name {
-      flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    #${PANEL_ID} fieldset.ps-pen-set .ToolIcon:has(input:checked) svg,
+    #${PANEL_ID} fieldset.ps-pen-set .ToolIcon:has(input:checked) svg g {
+      stroke: var(--color-on-primary, #fff) !important;
     }
     #${PANEL_ID} .ps-chip-del {
-      width:14px; height:14px; border-radius:50%;
-      display:flex; align-items:center; justify-content:center;
-      color: var(--text-muted); font-size:12px; line-height:1;
-      flex-shrink:0; opacity:0; transition: opacity 0.1s;
+      position: absolute; top: 2px; right: 2px; z-index: 2;
+      width: 12px; height: 12px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 10px; line-height: 1;
+      opacity: 0; transition: opacity 0.1s; cursor: pointer;
+      background: transparent;
     }
-    #${PANEL_ID} .ps-pen-chip:hover .ps-chip-del { opacity: 1; }
+    #${PANEL_ID} .ToolIcon:hover > .ps-chip-del { opacity: 1; }
     #${PANEL_ID} .ps-chip-del:hover {
       background: var(--background-modifier-error);
       color: var(--text-on-accent, #fff);
     }
 
-    #${PANEL_ID} .ps-color-swatches { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
-    #${PANEL_ID} .ps-swatch {
-      width:22px; height:22px; border-radius:50%;
-      cursor:pointer; border:2px solid transparent;
-      box-shadow: inset 0 0 0 1px var(--background-modifier-border);
+    /* Popovers — Island anchored beside the panel, same chrome as the
+       native color popover. */
+    #pen-styles-finetune-popover,
+    #pen-styles-mask-popover {
+      position: absolute; z-index: 9999;
     }
-    #${PANEL_ID} .ps-swatch.is-active { border-color: var(--interactive-accent); }
-    #${PANEL_ID} .ps-color-custom {
-      width:22px; height:22px; padding:0;
-      border:1px dashed var(--background-modifier-border);
-      border-radius:50%; cursor:pointer; background:transparent;
+    /* Force native Excalidraw typography on every element inside popovers.
+       Stacked-slider labels use inner <span> elements which lose the native
+       .control-label rule; this scoped reset paints them like native. */
+    #pen-styles-finetune-popover,
+    #pen-styles-mask-popover,
+    #pen-styles-finetune-popover *,
+    #pen-styles-mask-popover * {
+      font-family: var(--ui-font, var(--font-interface, "Assistant", sans-serif));
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+    #pen-styles-finetune-popover .color-picker__heading,
+    #pen-styles-mask-popover .color-picker__heading {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      padding: 4px 0;
+    }
+    /* Mask popover: clamp Island width only; let internal list scroll
+       so the heading + Actions row remain visible when masks accumulate. */
+    #pen-styles-mask-popover > .Island {
+      max-width: 13rem !important;
+      max-height: none !important;
+      overflow: visible !important;
+      position: relative;
+    }
+    /* Fine-tune popover: wider clamp + internal content scroll so heading + pin
+       stay visible. Per-popover override so #4 fix wins over inline maxWidth. */
+    #pen-styles-finetune-popover > .Island {
+      width: 14rem !important;
+      max-width: 14rem !important;
+      min-width: 14rem !important;
+      max-height: 24rem !important;
+      overflow: hidden !important;
+      padding-right: 4px;
+      position: relative;
+    }
+    #pen-styles-finetune-popover .color-picker-content {
+      max-height: calc(24rem - 2rem) !important;
+      overflow-y: auto !important;
+      padding-right: 4px;
     }
 
-    /* Two-row slider (Paper Mode style): label row above with right-aligned value,
-       slider row below filling full width. */
-    #${PANEL_ID} .ps-slabel {
-      display:flex; align-items:center; justify-content:space-between;
-      margin: 6px 0 2px;
+    /* Popover pin button — top-right corner of the inner Island. Click to
+       toggle outer.dataset.pinned; outside-click dismiss respects pinned.
+       Aggressive !important so native button rules cannot paint it black. */
+    .ps-pin-btn {
+      position: absolute !important; top: 4px !important; right: 4px !important;
+      width: 22px !important; height: 22px !important;
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important; margin: 0 !important;
+      display: inline-flex !important; align-items: center !important; justify-content: center !important;
+      cursor: pointer !important; border-radius: 4px !important;
+      color: var(--icon-fill-color) !important;
+      z-index: 3 !important;
+      box-shadow: none !important;
     }
-    #${PANEL_ID} .ps-slabel .ps-label { margin:0; }
-    #${PANEL_ID} .ps-slabel .ps-value {
-      font-size:11px; color: var(--text-muted); font-variant-numeric: tabular-nums;
+    .ps-pin-btn:hover {
+      background: var(--background-modifier-hover, rgba(0,0,0,0.08)) !important;
     }
-    #${PANEL_ID} .ps-slider-row { display:flex; align-items:center; gap:8px; padding-bottom: 2px; }
-    #${PANEL_ID} .ps-slider-row input[type=range] { flex:1; accent-color: var(--interactive-accent); }
+    .ps-pin-btn svg { width: 14px !important; height: 14px !important; }
+    .ps-pin-btn[aria-pressed="true"] {
+      background: var(--color-primary, var(--interactive-accent)) !important;
+      color: var(--color-on-primary, #fff) !important;
+    }
+    .ps-pin-btn[aria-pressed="true"] svg { stroke: currentColor !important; }
+    /* Slider rows (have a child <div> head): stack vertically.
+       Select / checkbox rows keep native row layout from .control-label. */
+    #pen-styles-finetune-popover .control-label:has(> div) {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 2px 0;
+    }
+    #pen-styles-finetune-popover .control-label > div:first-child {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    #pen-styles-finetune-popover input[type="range"] { width: 100%; }
+    #pen-styles-finetune-popover .control-label > div:first-child > span:last-child,
+    #pen-styles-finetune-popover .control-label .ps-val {
+      font-variant-numeric: tabular-nums;
+      color: var(--text-muted, var(--text-faint));
+    }
+    /* Mask popover content: NO overflow on container — list scrolls itself
+       so the heading + Actions row remain pinned visible. */
+    #pen-styles-mask-popover .color-picker-content {
+      max-height: none !important;
+      overflow: visible !important;
+    }
+    /* Action buttons in mask/fine-tune popovers must flow horizontally.
+       Native .buttonList renders column-wise inside our custom popovers. */
+    #pen-styles-mask-popover .buttonList,
+    #pen-styles-finetune-popover .buttonList {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    /* Tighten stacked slider rows in fine-tune so all controls fit the clamp. */
+    #pen-styles-finetune-popover .control-label {
+      margin: 0 !important;
+      padding: 2px 0 !important;
+    }
+    /* Native font on the label text — don't override Excalidraw's typography. */
+    #pen-styles-finetune-popover .control-label > div > span:first-child {
+      font-size: inherit;
+    }
+    /* Fixed min-width on value span so numeric columns align across rows. */
+    #pen-styles-finetune-popover .ps-val {
+      min-width: 3.5rem !important;
+      text-align: right !important;
+    }
+    /* Native select (Easing) renders with black bg on dark theme — theme it. */
+    #pen-styles-finetune-popover select {
+      background: var(--color-surface-high, var(--button-bg-color, #fff)) !important;
+      color: var(--color-on-surface, var(--icon-fill-color, #242424)) !important;
+      border: 1px solid var(--default-border-color, #ccc) !important;
+      border-radius: 4px !important;
+      padding: 2px 6px !important;
+      font-size: 0.75rem !important;
+      max-width: 8rem;
+      appearance: auto;
+    }
+    #pen-styles-finetune-popover select option {
+      background: var(--color-surface-high, #fff) !important;
+      color: var(--color-on-surface, var(--icon-fill-color, #242424)) !important;
+    }
+    #pen-styles-finetune-popover,
+    #pen-styles-finetune-popover .color-picker-content,
+    #pen-styles-finetune-popover .control-label,
+    #pen-styles-finetune-popover .control-label > span,
+    #pen-styles-finetune-popover .control-label > div,
+    #pen-styles-finetune-popover .control-label > div > span {
+      color: var(--color-on-surface, var(--icon-fill-color, #242424)) !important;
+    }
+    #pen-styles-finetune-popover .ps-val {
+      color: var(--color-gray-50, #646464) !important;
+    }
+    /* Rows with direct child select/checkbox/radio: lay out as space-between
+       flex row so label text + control hug opposite ends, vertically centered. */
+    #pen-styles-finetune-popover .control-label:has(> select),
+    #pen-styles-finetune-popover .control-label:has(> input[type="checkbox"]),
+    #pen-styles-finetune-popover .control-label:has(> input[type="radio"]) {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 8px !important;
+    }
+    #pen-styles-finetune-popover .control-label > select,
+    #pen-styles-finetune-popover .control-label > input[type="checkbox"],
+    #pen-styles-finetune-popover .control-label > input[type="radio"] {
+      flex: 0 0 auto;
+      margin: 0;
+    }
+    #pen-styles-finetune-popover .control-label > span {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    #pen-styles-finetune-popover .color-picker__heading {
+      color: var(--color-gray-50, #646464) !important;
+    }
 
-    /* Inline (compact) for fine-tune sliders inside collapsible only */
-    #${PANEL_ID} .ps-inline {
-      display:flex; align-items:center; gap:6px; padding: 3px 0;
-    }
-    #${PANEL_ID} .ps-inline .ps-label { margin:0; min-width: 52px; }
-    #${PANEL_ID} .ps-inline .ps-value { min-width: 32px; text-align:right; }
-    #${PANEL_ID} input[type=range] { accent-color: var(--interactive-accent); min-width:0; }
-    #${PANEL_ID} select, #${PANEL_ID} input[type=text] {
-      flex:1; background: var(--background-secondary); color: var(--text-normal);
-      border:1px solid var(--background-modifier-border); border-radius:4px;
-      padding:2px 5px; font-size:11px;
-    }
-    #${PANEL_ID} .ps-check { width:14px; height:14px; accent-color: var(--interactive-accent); margin:0; }
-
-    #${PANEL_ID} .ps-btn {
-      display:flex; align-items:center; justify-content:center; gap:4px;
-      padding:4px 6px; border-radius:5px; cursor:pointer; user-select:none;
-      border:1px solid var(--background-modifier-border);
-      background: var(--background-secondary);
-      font-size: 10px; color: var(--text-normal); font-weight:500;
-      min-height: 24px; touch-action: manipulation;
-      transition: background 0.1s, transform 0.05s;
-    }
-    #${PANEL_ID} .ps-btn:active { transform: scale(0.97); }
-    #${PANEL_ID} .ps-btn:hover { background: var(--background-modifier-hover); }
-    #${PANEL_ID} .ps-btn-row { display:flex; gap:4px; margin-top: 4px; }
-    #${PANEL_ID} .ps-btn-row .ps-btn { flex:1; }
-    /* Compact icon-only action bar */
-    #${PANEL_ID} .ps-actions {
-      display:flex; gap:4px; margin-top: 8px; align-items: center;
-    }
-    #${PANEL_ID} .ps-icon-btn {
-      width: 28px; height: 28px; flex: 0 0 28px;
-      display:flex; align-items:center; justify-content:center;
-      border-radius: 6px; cursor:pointer; user-select:none;
-      border:1px solid var(--background-modifier-border);
-      background: var(--background-secondary);
-      color: var(--text-normal);
-      transition: background 0.1s, transform 0.05s;
-    }
-    #${PANEL_ID} .ps-icon-btn:hover { background: var(--background-modifier-hover); }
-    #${PANEL_ID} .ps-icon-btn:active { transform: scale(0.94); }
-    #${PANEL_ID} .ps-icon-btn .ps-ico { width: 14px; height: 14px; }
-    #${PANEL_ID} .ps-paper-pill {
-      flex:1; display:flex; align-items:center; justify-content:space-between;
-      padding:0 10px; height: 28px;
-      border-radius: 6px; cursor:pointer; user-select:none;
-      border:1px solid var(--background-modifier-border);
-      background: var(--background-secondary);
-      font-size: 11px; color: var(--text-normal); font-weight:500;
-    }
-    #${PANEL_ID} .ps-paper-pill:hover { background: var(--background-modifier-hover); }
-    #${PANEL_ID} .ps-paper-pill .ps-pp-left {
-      display:flex; align-items:center; gap:5px;
-    }
-    #${PANEL_ID} .ps-paper-pill.is-on {
-      border-color: var(--interactive-accent);
-    }
-    #${PANEL_ID} .ps-paper-pill .ps-toggle-pill {
-      width: 24px; height: 13px; border-radius: 7px;
-      background: var(--background-modifier-border); position: relative;
-      transition: background 0.15s;
-    }
-    #${PANEL_ID} .ps-paper-pill .ps-toggle-pill::after {
-      content: ""; position:absolute; top:2px; left:2px;
-      width:9px; height:9px; border-radius:50%;
-      background: var(--text-on-accent, #fff);
-      transition: left 0.15s;
-    }
-    #${PANEL_ID} .ps-paper-pill.is-on .ps-toggle-pill { background: var(--interactive-accent); }
-    #${PANEL_ID} .ps-paper-pill.is-on .ps-toggle-pill::after { left: 13px; }
-    #${PANEL_ID} .ps-btn.is-on {
-      border-color: var(--interactive-accent);
-      background: var(--interactive-accent);
-      color: var(--text-on-accent);
-    }
-    #${PANEL_ID} .ps-toggle {
-      display:flex; align-items:center; justify-content:space-between;
-      padding:5px 8px; margin-top:5px; border-radius:5px; cursor:pointer;
-      border:1px solid var(--background-modifier-border);
-      background: var(--background-secondary);
-      font-size: 10px; color: var(--text-normal); font-weight:500;
-      user-select:none; min-height: 22px;
-    }
-    #${PANEL_ID} .ps-toggle:hover { background: var(--background-modifier-hover); }
-    #${PANEL_ID} .ps-toggle .ps-toggle-pill {
-      width: 22px; height: 13px; border-radius: 7px;
-      background: var(--background-modifier-border);
-      position: relative; transition: background 0.15s;
-    }
-    #${PANEL_ID} .ps-toggle .ps-toggle-pill::after {
-      content: ""; position:absolute; top:2px; left:2px;
-      width:9px; height:9px; border-radius:50%;
-      background: var(--text-on-accent, #fff);
-      transition: left 0.15s;
-    }
-    #${PANEL_ID} .ps-toggle.is-on .ps-toggle-pill {
-      background: var(--interactive-accent);
-    }
-    #${PANEL_ID} .ps-toggle.is-on .ps-toggle-pill::after { left: 11px; }
-
-    /* Fine-tune collapsible */
-    #${PANEL_ID} .ps-fine-toggle {
-      display:flex; align-items:center; justify-content:space-between;
-      cursor:pointer; padding:7px 0; margin-top:6px;
-      border-top:1px solid var(--background-modifier-border);
-      font-size: 12px; color: var(--text-normal); text-transform: uppercase;
-      letter-spacing: 0.5px; font-weight: 600;
-    }
-    #${PANEL_ID} .ps-fine-toggle:hover { color: var(--text-accent); }
-    #${PANEL_ID} .ps-fine-toggle:hover { color: var(--text-normal); }
-    #${PANEL_ID} .ps-fine-toggle .ps-chev {
-      transition: transform 0.15s; width: 12px; height: 12px;
-      display: inline-flex; align-items:center; justify-content:center;
-    }
-    #${PANEL_ID} .ps-fine-toggle .ps-chev svg { width:100%; height:100%; }
-    #${PANEL_ID} .ps-fine-toggle.is-open .ps-chev { transform: rotate(90deg); }
-    #${PANEL_ID} .ps-fine { display:none; }
-    #${PANEL_ID} .ps-fine.is-open { display:block; }
-    #${PANEL_ID} .ps-fine .ps-row-h { padding: 3px 0; }
-    #${PANEL_ID} .ps-fine .ps-label { margin: 0; min-width: 96px; }
-    #${PANEL_ID} .ps-fine .ps-row-h .ps-value { min-width: 36px; text-align:right; }
-    #${PANEL_ID} .ps-fine .ps-slider-row { padding: 0 0 3px; }
-
-    /* Mask section */
-    #${PANEL_ID} .ps-mask {
-      display:none; padding-top:6px; padding-bottom:8px;
-      border-bottom:1px solid var(--background-modifier-border);
-      margin-bottom: 4px;
-    }
-    #${PANEL_ID} .ps-mask.is-open { display:block; }
-    #${PANEL_ID} .ps-mask-list {
-      max-height: 110px; overflow-y:auto;
-      margin-top: 6px; padding: 2px;
-      border: 1px solid var(--background-modifier-border);
-      border-radius: 5px;
-      background: var(--background-secondary);
+    /* Mask popover list rows. Mask color swatch uses .color-picker__button
+       for native border/sizing; only structural rules below. */
+    #pen-styles-mask-popover .ps-mask-list {
+      max-height: 140px !important;
+      overflow-y: auto !important;
+      overflow-x: hidden;
+      margin-top: 6px;
       display: flex; flex-direction: column; gap: 2px;
     }
-    #${PANEL_ID} .ps-mask-list:empty::before {
+    #pen-styles-mask-popover .ps-mask-list:empty::before {
       content: "No masks yet";
-      display:block; padding: 8px; text-align:center;
-      color: var(--text-muted); font-size: 11px; font-style: italic;
+      display: block; padding: 8px; text-align: center;
+      color: var(--text-muted); font-style: italic;
     }
-    #${PANEL_ID} .ps-mask-item {
-      display:flex; align-items:center; gap:5px;
-      padding:3px 5px; border-radius: 4px;
-      font-size: 11px; color: var(--text-normal);
+    #pen-styles-mask-popover .ps-mask-item {
+      display: flex; align-items: center; gap: 4px;
+      padding: 2px 4px; border-radius: 4px;
     }
-    #${PANEL_ID} .ps-mask-item:hover { background: var(--background-modifier-hover); }
-    #${PANEL_ID} .ps-mask-item .ps-mask-color {
-      width:16px; height:16px; padding:0; flex-shrink:0;
-      border:1px solid var(--background-modifier-border);
-      border-radius: 3px; cursor:pointer; background:transparent;
+    #pen-styles-mask-popover .ps-mask-item:hover { background: var(--background-modifier-hover); }
+    /* Per-row eye + trash buttons: minimal inline icon-button chrome.
+       Avoids the big native button background that turned them into
+       black blocks inside the list row. */
+    #pen-styles-mask-popover .ps-mask-item button {
+      background: transparent; border: none; padding: 2px; margin: 0;
+      width: 20px; height: 20px;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; border-radius: 3px;
+      color: var(--icon-fill-color);
     }
-    #${PANEL_ID} .ps-mask-item .ps-mask-name {
-      flex:1; cursor:pointer; padding: 2px 0;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    #pen-styles-mask-popover .ps-mask-item button:hover {
+      background: var(--background-modifier-hover, rgba(0,0,0,0.08));
     }
-    #${PANEL_ID} .ps-mask-item .ps-mask-mini {
-      width:18px; height:18px; flex:0 0 18px;
-      display:flex; align-items:center; justify-content:center;
-      border-radius: 3px; cursor:pointer; color: var(--text-muted);
+    #pen-styles-mask-popover .ps-mask-item button svg {
+      width: 14px; height: 14px;
     }
-    #${PANEL_ID} .ps-mask-item .ps-mask-mini:hover {
-      background: var(--background-modifier-hover); color: var(--text-normal);
+    #pen-styles-mask-popover .ps-mask-item input[type="color"] {
+      width: 18px; height: 18px; padding: 0;
+      border: 1px solid var(--default-border-color); border-radius: 3px;
     }
-    #${PANEL_ID} .ps-mask-item .ps-mask-mini.ps-danger:hover { color: var(--text-error); }
-    #${PANEL_ID} .ps-mask-item .ps-mask-mini svg { width: 12px; height: 12px; }
-    #${PANEL_ID} .ps-mask-item.is-hidden .ps-mask-name { opacity: 0.55; text-decoration: line-through; }
-    #${PANEL_ID} .ps-mask-status {
-      font-size: 12px; color: var(--text-muted); padding: 4px 0 6px;
+    #pen-styles-mask-popover .ps-mask-name {
+      flex: 1; cursor: pointer; padding: 2px 0;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    #${PANEL_ID} .ps-mask-status b { color: var(--text-normal); }
-    #${PANEL_ID} .ps-btn-danger { color: var(--text-error); }
-    #${PANEL_ID} .ps-icon-btn.is-armed {
-      background: var(--text-error);
-      border-color: var(--text-error);
-      color: var(--text-on-accent, #fff);
+    #pen-styles-mask-popover .ps-mask-item.is-hidden .ps-mask-name {
+      opacity: 0.55; text-decoration: line-through;
+    }
+    #pen-styles-mask-popover .zIndexButton.is-armed {
+      background: var(--text-error) !important;
       animation: ps-pulse 1.2s ease-in-out infinite;
     }
     @keyframes ps-pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.55; }
     }
-    #${PANEL_ID} .ps-mask-actions {
-      display:flex; gap:5px; margin-top:5px;
+
+    /* Active state for toggle-style zIndexButton (e.g. Paper). Mirrors
+       native [aria-pressed="true"] / Excalidraw's "active" primary fill. */
+    #${PANEL_ID} .zIndexButton[data-active="true"] {
+      background: var(--color-primary, var(--interactive-accent)) !important;
+      color: var(--color-on-primary, var(--text-on-accent, #fff)) !important;
     }
-    #${PANEL_ID} .ps-mask-actions .ps-icon-btn { flex:1; height: 30px; }
-    #${PANEL_ID} .ps-mask-actions .ps-icon-btn .ps-ico { width: 14px; height: 14px; }
+    #${PANEL_ID} .zIndexButton[data-active="true"] svg,
+    #${PANEL_ID} .zIndexButton[data-active="true"] svg g {
+      stroke: var(--color-on-primary, var(--text-on-accent, #fff)) !important;
+    }
+
+    /* Visual mutual-exclusion: while Pen Styles panel open, suppress
+       the active-tool highlight in the shape toolbar. */
+    body.pen-styles-active .App-toolbar label.ToolIcon input[type="radio"]:checked + .ToolIcon__icon,
+    body.pen-styles-active .App-toolbar label.ToolIcon:has(input:checked) > .ToolIcon__icon {
+      background: transparent !important;
+      color: var(--icon-fill-color) !important;
+    }
+    body.pen-styles-active .App-toolbar label.ToolIcon input[type="radio"]:checked + .ToolIcon__icon svg,
+    body.pen-styles-active .App-toolbar label.ToolIcon:has(input:checked) > .ToolIcon__icon svg,
+    body.pen-styles-active .App-toolbar label.ToolIcon input[type="radio"]:checked + .ToolIcon__icon svg g {
+      stroke: var(--icon-fill-color) !important;
+    }
+    body.pen-styles-active .App-toolbar label.ToolIcon input[type="radio"]:checked + .ToolIcon__icon .ToolIcon__keybinding {
+      color: var(--icon-fill-color) !important;
+    }
+
+    /* Main panel — slightly tighter gap between sections only. Native
+       fieldset/legend/h3/control-label sizing untouched. */
+    #${PANEL_ID} > * + * { margin-top: 6px; }
+
+    /* Fine-tune popover overflow fix — sliders + value spans cause
+       horizontal scroll past 13rem clamp. Force value span to shrink,
+       label to ellipsis, slider full width. */
+    #pen-styles-finetune-popover .control-label > div {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 4px; font-size: 0.7rem;
+    }
+    #pen-styles-finetune-popover .control-label > div > span:first-child {
+      flex: 1 1 auto; min-width: 0;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    #pen-styles-finetune-popover .control-label > div > .ps-val {
+      flex: 0 0 auto; color: var(--text-muted, var(--text-faint));
+      font-variant-numeric: tabular-nums;
+    }
+    #pen-styles-finetune-popover .control-label input[type="range"] {
+      width: 100%; min-width: 0;
+    }
+    #pen-styles-finetune-popover .control-label select {
+      max-width: 8rem; min-width: 0;
+    }
   `;
   document.head.appendChild(styleTag);
 }
 
 // =========================================================================================
-// Build panel
+// Build panel — docked native side bar (matches Paper Mode pattern).
+// Mount inside .App-menu_top__left as section.selected-shape-actions >
+// Island.App-menu__left. React-controlled, but MO restore keeps it
+// alive across re-renders. Native .Island supplies bg/shadow/radius.
 // =========================================================================================
+const PEN_SIDE_WRAP_ID = "pen-styles-side-wrap";
+
+function mountPenSidePanel() {
+  const host =
+    view.contentEl.querySelector(".App-menu_top__left") ||
+    view.contentEl.querySelector(".excalidraw") ||
+    view.contentEl;
+  if (!host) return null;
+  const wrapSec = document.createElement("section");
+  wrapSec.id = PEN_SIDE_WRAP_ID;
+  wrapSec.className = "selected-shape-actions zen-mode-transition";
+  wrapSec.setAttribute("aria-label", "Pen Styles");
+  const island = document.createElement("div");
+  island.className = "Island App-menu__left";
+  island.style.setProperty("--padding", "2");
+  wrapSec.appendChild(island);
+  host.appendChild(wrapSec);
+  return island;
+}
+
+// Dedupe: remove ALL existing #pen-styles-panel nodes anywhere in
+// view.contentEl before mount. Prevents ghost empty panel from MO
+// restore race or stale display:none leftovers.
+view.contentEl.querySelectorAll("#" + PANEL_ID).forEach(n => n.remove());
+
 panel = document.createElement("div");
 panel.id = PANEL_ID;
-document.body.appendChild(panel);
-cfRaisePanel(panel);
-panel.addEventListener("mousedown", () => cfRaisePanel(panel), true);
+// Inner panel uses the native .selected-shape-actions class so native
+// CSS rules paint typography/spacing/h3 styling identically to native.
+panel.className = "selected-shape-actions";
+const _penIsland = mountPenSidePanel();
+const _panelHost = _penIsland || view.contentEl;
+_panelHost.appendChild(panel);
 
-// ---- Header ---------------------------------------------------------------------------
-const header = panel.createDiv({ cls: "ps-header" });
-const titleEl = header.createDiv({ cls: "ps-title" });
-titleEl.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg> Pen Styles`;
-const closeBtn = header.createDiv({ cls: "ps-close", text: "✕" });
-closeBtn.onclick = (e) => {
-  e.stopPropagation();
-  panel.style.display = "none";
-  // If user closes the panel while mask draw is armed, disarm so the
-  // pointerup listener doesn't keep tagging strokes after the UI is gone.
+// Header removed — toolbar button + Esc are the dismiss paths.
+
+function closePenSidePanel() {
+  document.body.classList.remove("pen-styles-active");
+  // Fully remove panel + side wrap — no display:none leftovers that
+  // render as ghost empty white boxes.
+  view.contentEl.querySelectorAll("#" + PANEL_ID).forEach(n => n.remove());
+  view.contentEl.querySelector("#" + PEN_SIDE_WRAP_ID)?.remove();
+  // Restore native selected-shape-actions visibility.
+  view.contentEl.querySelector(".selected-shape-actions-container")
+    ?.classList.remove("pen-styles-open");
   if (typeof isMaskArmed === "function" && isMaskArmed()) {
     stopMaskDraw(false);
   }
-};
+}
 
-// ---- Drag ----------------------------------------------------------------------------
-(function makeDraggable() {
-  let dragging = false, ox = 0, oy = 0;
-  const onDown = (e) => {
-    if (e.target.closest(".ps-close")) return;
-    const r = panel.getBoundingClientRect();
-    dragging = true; ox = e.clientX - r.left; oy = e.clientY - r.top;
-    header.style.cursor = "grabbing";
-    e.preventDefault();
-  };
-  const onMove = (e) => {
-    if (!dragging) return;
-    const w = panel.offsetWidth, h = panel.offsetHeight, m = 8;
-    const left = Math.max(m, Math.min(window.innerWidth  - w - m, e.clientX - ox));
-    const top  = Math.max(m, Math.min(window.innerHeight - h - m, e.clientY - oy));
-    panel.style.setProperty("left",  `${left}px`, "important");
-    panel.style.setProperty("top",   `${top}px`,  "important");
-    panel.style.setProperty("right", "auto", "important");
-  };
-  const onUp = () => {
-    if (dragging) { dragging = false; header.style.cursor = "grab"; }
-  };
-  const onResize = () => {
-    const r = panel.getBoundingClientRect(), m = 8;
-    if (r.right  > window.innerWidth  - m) panel.style.setProperty("left", `${Math.max(m, window.innerWidth  - r.width  - m)}px`, "important");
-    if (r.bottom > window.innerHeight - m) panel.style.setProperty("top",  `${Math.max(m, window.innerHeight - r.height - m)}px`, "important");
-    if (r.left < m) panel.style.setProperty("left", `${m}px`, "important");
-    if (r.top  < m) panel.style.setProperty("top",  `${m}px`, "important");
-  };
-  header.addEventListener("mousedown", onDown);
-  window.addEventListener("mousemove", onMove);
-  window.addEventListener("mouseup", onUp);
-  window.addEventListener("resize", onResize);
-  state.cleanup.push(() => {
-    header.removeEventListener("mousedown", onDown);
-    window.removeEventListener("mousemove", onMove);
-    window.removeEventListener("mouseup", onUp);
-    window.removeEventListener("resize", onResize);
+function openPenSidePanel() {
+  // If panel was .remove()'d on close, re-mount the side wrap + panel
+  // before showing. Keeps the closed-over `panel` ref attached.
+  if (!panel.isConnected) {
+    view.contentEl.querySelectorAll("#" + PANEL_ID).forEach(n => n.remove());
+    view.contentEl.querySelector("#" + PEN_SIDE_WRAP_ID)?.remove();
+    const island = mountPenSidePanel();
+    (island || view.contentEl).appendChild(panel);
+  }
+  panel.style.display = "";
+  document.body.classList.add("pen-styles-active");
+  const wrap = view.contentEl.querySelector("#" + PEN_SIDE_WRAP_ID);
+  if (wrap) wrap.style.display = "";
+  // Hide native selected-shape-actions so the two side bars don't stack.
+  view.contentEl.querySelector(".selected-shape-actions-container")
+    ?.classList.add("pen-styles-open");
+  // Time-window suppress for tool watcher — setActiveTool fires onChange
+  // multiple times across React commits; single-shot flags get consumed
+  // by no-op first fire. 300ms window covers all batched fires.
+  state.suppressUntil = Date.now() + 300;
+  try { api.setActiveTool({ type: "freedraw" }); } catch (_) {}
+}
+
+// Expose globally so the toggle path at script top can reuse.
+window.openPenSidePanel = openPenSidePanel;
+window.closePenSidePanel = closePenSidePanel;
+
+// ---- Tool watcher: auto-close when user picks a different tool -------------------------
+if (view._penStylesToolWatcher) {
+  try { view._penStylesToolWatcher.cleanup(); } catch (_) {}
+}
+{
+  const initial = api.getAppState();
+  let lastTool = initial.activeTool?.type;
+  let lastSel  = Object.keys(initial.selectedElementIds || {}).length;
+  const off = api.onChange((_els, app) => {
+    const tool = app.activeTool?.type;
+    const sel  = Object.keys(app.selectedElementIds || {}).length;
+    const toolChanged = tool !== lastTool;
+    const selGained   = sel > 0 && lastSel === 0;
+    lastTool = tool; lastSel = sel;
+    if (state.suppressUntil && Date.now() < state.suppressUntil) return;
+    const isOpen = !!document.getElementById(PANEL_ID);
+    if (!isOpen) return;
+    // Only close on transition AWAY from freedraw (Pen Styles is for
+    // drawing). If user picks selection / rect / etc., panel should close.
+    if (toolChanged && tool !== "freedraw") closePenSidePanel();
+    else if (selGained) closePenSidePanel();
   });
-})();
+  view._penStylesToolWatcher = {
+    cleanup: () => { try { off?.(); } catch (_) {} view._penStylesToolWatcher = null; }
+  };
+  state.cleanup.push(() => view._penStylesToolWatcher?.cleanup());
+}
+
+// ---- Color popover (anchored, Paper-Mode style) ---------------------------------------
+// Big swatch grid + hex input + OS color picker, mounted inside .excalidraw
+// for native CSS scope. Triggered by the active-color button.
+function buildPSColorPopover(onPick, currentColor) {
+  const PALETTE = [
+    { c: "#ffffff", k: "w", dark: false },
+    { c: "#e9ecef", k: "e", dark: false },
+    { c: "#1e1e1e", k: "r", dark: true  },
+    { c: "#eaddd7", k: "t", dark: false },
+    { c: "#cfcfcf", k: "y", dark: false },
+    { c: "#99e9f2", k: "a", dark: false },
+    { c: "#a5d8ff", k: "s", dark: false },
+    { c: "#d0bfff", k: "d", dark: false },
+    { c: "#eebefa", k: "f", dark: false },
+    { c: "#fcc2d7", k: "g", dark: false },
+    { c: "#b2f2bb", k: "z", dark: false },
+    { c: "#96f2d7", k: "x", dark: false },
+    { c: "#ffec99", k: "c", dark: false },
+    { c: "#ffd8a8", k: "v", dark: false },
+    { c: "#ffc9c9", k: "b", dark: false },
+  ];
+  const outer = document.createElement("div");
+  outer.id = "pen-styles-color-popover";
+  outer.style.cssText = "position:absolute;z-index:9999;";
+  const island = document.createElement("div");
+  island.className = "Island";
+  island.style.setProperty("--padding", "3");
+  island.style.maxWidth = "13rem";
+  outer.appendChild(island);
+  const dlg = document.createElement("div");
+  dlg.setAttribute("role", "dialog");
+  dlg.setAttribute("aria-modal", "true");
+  dlg.setAttribute("aria-label", "Color picker");
+  island.appendChild(dlg);
+  const content = document.createElement("div");
+  content.className = "color-picker-content properties-content";
+  content.tabIndex = -1;
+  dlg.appendChild(content);
+  const cSec = document.createElement("div");
+  content.appendChild(cSec);
+  const cHead = document.createElement("div");
+  cHead.className = "color-picker__heading";
+  cHead.textContent = "Colors";
+  cSec.appendChild(cHead);
+  const cGrid = document.createElement("div");
+  cGrid.className = "color-picker-content--default";
+  cSec.appendChild(cGrid);
+  for (const { c, k, dark } of PALETTE) {
+    const b = document.createElement("button");
+    b.type = "button"; b.tabIndex = -1;
+    const isActive = currentColor && c.toLowerCase() === currentColor.toLowerCase();
+    b.className = "color-picker__button color-picker__button--large has-outline" + (isActive ? " active" : "");
+    b.title = `${c} — ${k}`;
+    b.setAttribute("aria-label", `${c} — ${k}`);
+    b.style.setProperty("--swatch-color", c);
+    const o = document.createElement("div"); o.className = "color-picker__button-outline"; b.appendChild(o);
+    const hk = document.createElement("div");
+    hk.className = "color-picker__button__hotkey-label";
+    hk.style.color = dark ? "rgb(255,255,255)" : "rgb(0,0,0)";
+    hk.textContent = k;
+    b.appendChild(hk);
+    b.onclick = (e) => { e.stopPropagation(); onPick(c); outer.remove(); };
+    cGrid.appendChild(b);
+  }
+  const hSec = document.createElement("div");
+  content.appendChild(hSec);
+  const hHead = document.createElement("div");
+  hHead.className = "color-picker__heading";
+  hHead.textContent = "Hex code";
+  hSec.appendChild(hHead);
+  const hRow = document.createElement("div");
+  hRow.className = "color-picker__input-label";
+  hSec.appendChild(hRow);
+  const hash = document.createElement("div");
+  hash.className = "color-picker__input-hash";
+  hash.textContent = "#";
+  hRow.appendChild(hash);
+  const hex = document.createElement("input");
+  hex.spellcheck = false;
+  hex.className = "color-picker-input";
+  hex.setAttribute("aria-label", "Hex code");
+  hex.tabIndex = -1;
+  hex.placeholder = "Color";
+  hex.value = (currentColor || "").replace(/^#/, "");
+  hex.style.cssText = "border:0;padding:0;background:transparent;outline:none;";
+  hRow.appendChild(hex);
+  const sep = document.createElement("div");
+  sep.style.cssText = "width:1px;height:1.25rem;background-color:var(--icon-fill-color);";
+  hRow.appendChild(sep);
+  const native = document.createElement("input");
+  native.type = "color";
+  native.value = currentColor || "#000000";
+  native.style.cssText = "margin:auto -0.625rem auto 4px;cursor:pointer;border:0;background:transparent;width:24px;height:24px;padding:0;";
+  native.title = "OS color picker";
+  hRow.appendChild(native);
+  hex.addEventListener("change", () => {
+    const v = hex.value.trim().replace(/^#/, "");
+    if (/^[0-9a-f]{3,8}$/i.test(v)) { onPick("#" + v); outer.remove(); }
+  });
+  native.addEventListener("input",  (e) => onPick(e.target.value));
+  native.addEventListener("change", () => outer.remove());
+  return outer;
+}
+
+// ---- Color section (FIRST — native color-picker markup) -----------------------------
+// Native h3 + .color-picker-container > .color-picker__top-picks + active-color
+// trigger. Same chrome as the Background/Stroke row in Excalidraw's
+// selected-shape-actions. Custom OS picker hidden behind active-color
+// click for hex / wheel access.
+{
+  const colSection = panel.createDiv();
+  const colH3 = document.createElement("h3");
+  colH3.setAttribute("aria-hidden", "true");
+  colH3.textContent = "Color";
+  colSection.appendChild(colH3);
+  const cpcOuter = colSection.createDiv();
+  const cpc = document.createElement("div");
+  cpc.className = "color-picker-container";
+  cpc.setAttribute("role", "dialog");
+  cpc.setAttribute("aria-modal", "true");
+  cpcOuter.appendChild(cpc);
+  const topPicks = document.createElement("div");
+  topPicks.className = "color-picker__top-picks";
+  cpc.appendChild(topPicks);
+  const swatchBtns = {};
+  const customPicker = document.createElement("input");
+  customPicker.type = "color";
+  customPicker.style.cssText = "position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;";
+  customPicker.value = /^#[0-9a-f]{6}$/i.test(cfg.color) ? cfg.color : "#000000";
+  cpc.appendChild(customPicker);
+  const refreshActiveColor = () => {
+    activeBtn.style.setProperty("--swatch-color", cfg.color);
+    for (const [c, b] of Object.entries(swatchBtns)) {
+      b.classList.toggle("active", c.toLowerCase() === cfg.color.toLowerCase());
+    }
+  };
+  for (const c of COLOR_PRESETS.slice(0, 5)) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "color-picker__button";
+    b.title = c;
+    b.style.setProperty("--swatch-color", c);
+    const o = document.createElement("div");
+    o.className = "color-picker__button-outline";
+    b.appendChild(o);
+    b.onclick = () => {
+      cfg.color = c;
+      refreshActiveColor();
+      state.dirty = true; applyActivePen(); persistSoon();
+      syncFineRowsLive();
+    };
+    swatchBtns[c] = b;
+    topPicks.appendChild(b);
+  }
+  const sep = document.createElement("div");
+  sep.style.cssText = "width:1px;height:1rem;background-color:var(--default-border-color);margin:0 auto;";
+  cpc.appendChild(sep);
+  const activeBtn = document.createElement("button");
+  activeBtn.type = "button";
+  activeBtn.className = "color-picker__button active-color properties-trigger";
+  activeBtn.title = "Pick color";
+  activeBtn.setAttribute("aria-label", "Color");
+  activeBtn.style.setProperty("--swatch-color", cfg.color);
+  const ao = document.createElement("div");
+  ao.className = "color-picker__button-outline";
+  activeBtn.appendChild(ao);
+  activeBtn.onclick = (e) => {
+    e.stopPropagation();
+    const existing = view.contentEl.querySelector("#pen-styles-color-popover");
+    if (existing) { existing.remove(); return; }
+    const pop = buildPSColorPopover((c) => {
+      cfg.color = c;
+      refreshActiveColor();
+      state.dirty = true; applyActivePen(); persistSoon();
+      syncFineRowsLive();
+    }, cfg.color);
+    const host = view.contentEl.querySelector(".excalidraw") || view.contentEl;
+    host.appendChild(pop);
+    // Anchor to the active-color trigger button — verbatim Paper Mode
+    // pattern (right + 28, top - 4). Keeps the popover flush beside the
+    // trigger like the native color flyout.
+    const btnRect = activeBtn.getBoundingClientRect();
+    const hostRect = host.getBoundingClientRect();
+    let left = btnRect.right - hostRect.left + 28;
+    let top  = btnRect.top   - hostRect.top  - 4;
+    pop.style.left = `${Math.round(left)}px`;
+    pop.style.top  = `${Math.round(top)}px`;
+    const popH  = pop.offsetHeight;
+    const hostH = host.getBoundingClientRect().height;
+    if (top + popH > hostH - 8) {
+      top = Math.max(8, hostH - popH - 8);
+      pop.style.top = `${Math.round(top)}px`;
+    }
+    setTimeout(() => {
+      const onDown = (ev) => {
+        if (pop.contains(ev.target) || activeBtn.contains(ev.target)) return;
+        pop.remove();
+        document.removeEventListener("mousedown", onDown, true);
+      };
+      document.addEventListener("mousedown", onDown, true);
+    }, 0);
+  };
+  cpc.appendChild(activeBtn);
+  refreshActiveColor();
+  customPicker.oninput = (e) => {
+    cfg.color = e.target.value;
+    refreshActiveColor();
+    state.dirty = true; applyActivePen(); persistSoon();
+    syncFineRowsLive();
+  };
+  // Expose so the PEN-preset-change handler can re-sync the active color
+  // when switching presets (e.g. clicking "Highlighter" changes color).
+  window.__penStylesRefreshColor = () => {
+    customPicker.value = /^#[0-9a-f]{6}$/i.test(cfg.color) ? cfg.color : "#000000";
+    refreshActiveColor();
+  };
+}
 
 // ---- Pen preset grid -----------------------------------------------------------------
-panel.createDiv({ cls: "ps-label", text: "PEN" });
-const grid = panel.createDiv({ cls: "ps-pen-grid" });
+// (The fieldset+legend mounted by buildControlLabelSlider's neighbour
+// further down — see rebuildGrid call site. Legend replaces the old
+// standalone <h3>Pen</h3>.)
+
+// Helper: build native Excalidraw range-input row. Mirrors exactly the
+// "Opacity" / "Stroke width" control-label markup from selected-shape-actions:
+//   <label class="control-label">TEXT
+//     <div class="range-wrapper">
+//       <input class="range-input" type="range" …>
+//       <div class="value-bubble">…</div>
+//       <div class="zero-label">0</div>
+//     </div>
+//   </label>
+// Native CSS paints the slider, the floating value bubble, and the trailing
+// "0" zero-label. We update bubble position on input.
+function buildControlLabelSlider(parent, labelText, value, min, max, step, fmt) {
+  const lbl = document.createElement("label");
+  lbl.className = "control-label";
+  lbl.appendChild(document.createTextNode(labelText));
+  const wrap = document.createElement("div");
+  wrap.className = "range-wrapper";
+  const range = document.createElement("input");
+  range.type = "range";
+  range.min = String(min); range.max = String(max); range.step = String(step);
+  range.value = String(value);
+  range.className = "range-input";
+  wrap.appendChild(range);
+  const bubble = document.createElement("div");
+  bubble.className = "value-bubble";
+  bubble.textContent = fmt(value);
+  wrap.appendChild(bubble);
+  const zero = document.createElement("div");
+  zero.className = "zero-label";
+  zero.textContent = "0";
+  wrap.appendChild(zero);
+  lbl.appendChild(wrap);
+  parent.appendChild(lbl);
+  // Position bubble above the thumb (native pattern uses left:calc(...)).
+  const positionBubble = () => {
+    const ratio = (parseFloat(range.value) - min) / (max - min || 1);
+    bubble.style.left = `calc(${ratio * 100}% + (${(0.5 - ratio) * 16}px))`;
+  };
+  positionBubble();
+  range.addEventListener("input", positionBubble);
+  return { wrap: lbl, input: range, value: bubble, fmt, reposition: positionBubble };
+}
+// Pen preset grid — native fieldset+legend+buttonList chrome. The legend
+// replaces the standalone <h3>Pen</h3> heading so it matches the native
+// "Stroke width" row exactly.
+const penFieldset = document.createElement("fieldset");
+penFieldset.className = "ps-pen-set";
+const penLegend = document.createElement("legend");
+penLegend.textContent = "Pen";
+penFieldset.appendChild(penLegend);
+const grid = document.createElement("div");
+grid.className = "buttonList";
+penFieldset.appendChild(grid);
+panel.appendChild(penFieldset);
 const chipEls = {};
 function rebuildGrid() {
   grid.empty();
   for (const [name, p] of Object.entries(allPresets())) {
-    const chip = grid.createDiv({ cls: "ps-pen-chip" });
-    // Icon stroke uses theme text color so it's always readable on the
-    // chip background (pen-ink colors like pure black or pale yellow
-    // were invisible under dark / light themes respectively).
     const col = "currentColor";
     const isCustom = !BUILTIN_PRESETS[name];
-    const delHtml = isCustom ? `<span class="ps-chip-del" title="Delete preset">×</span>` : "";
     const iconKey = PEN_ICONS[name] ? name : "Fine Pen";
-    chip.innerHTML = `<span class="ps-pen-icon">${penIconSvg(iconKey, col)}</span><span class="ps-pen-name">${name}</span>${delHtml}`;
-    chipEls[name] = chip;
-    chip.onclick = (e) => {
-      if (e.target.closest(".ps-chip-del")) return;
-      cfg.active = name;
-      cfg.width = null; cfg.color = null; cfg.opacity = null;
-      Object.entries(chipEls).forEach(([k, el]) => el.classList.toggle("is-active", k === name));
-      state.dirty = true; applyActivePen(); persistSoon();
-      syncControls(); syncFineRows();
-    };
+    // Native ToolIcon.Shape pattern: <label.ToolIcon.Shape><input radio>
+    // <div.ToolIcon__icon>svg</div></label>. CSS paints :checked purple.
+    const label = document.createElement("label");
+    label.className = "ToolIcon Shape";
+    label.title = name;
+    label.setAttribute("aria-label", name);
+    const input = document.createElement("input");
+    // Native shape ToolIcon: size class lives on the INPUT (not the label).
+    input.className = "ToolIcon_type_radio ToolIcon_size_medium";
+    input.type = "radio";
+    input.name = "pen-styles-pen";
+    input.value = name;
+    input.setAttribute("aria-label", name);
+    if (name === cfg.active) input.checked = true;
+    label.appendChild(input);
+    const iconWrap = document.createElement("div");
+    iconWrap.className = "ToolIcon__icon";
+    iconWrap.innerHTML = penIconSvg(iconKey, col);
+    label.appendChild(iconWrap);
     if (isCustom) {
-      const del = chip.querySelector(".ps-chip-del");
+      const del = document.createElement("span");
+      del.className = "ps-chip-del";
+      del.title = "Delete preset";
+      del.textContent = "×";
+      label.appendChild(del);
       del.onclick = async (e) => {
         e.stopPropagation();
+        e.preventDefault();
         let ok = false;
         try {
           ok = await utils.suggester(
             [`Delete preset "${name}"`, "Cancel"], [true, false], "Confirm delete"
           );
         } catch (_) {
-          // utils.suggester unavailable → fall back to inline confirm
           ok = confirm(`Delete preset "${name}"?`);
         }
         if (!ok) return;
@@ -1169,98 +1606,121 @@ function rebuildGrid() {
           cfg.width = cfg.color = cfg.opacity = null;
         }
         state.dirty = true; persistSoon();
-        rebuildGrid(); syncControls(); syncFineRows(); applyActivePen();
+        rebuildGrid(); syncControls();
+        applyActivePen();
         new Notice(`Deleted preset: ${name}`);
       };
     }
-    if (name === cfg.active) chip.classList.add("is-active");
+    chipEls[name] = label;
+    input.onchange = () => {
+      cfg.active = name;
+      cfg.width = null; cfg.color = null; cfg.opacity = null;
+      state.dirty = true; applyActivePen(); persistSoon();
+      syncControls();
+    };
+    grid.appendChild(label);
   }
 }
 rebuildGrid();
 
-// Placeholder mounted right after the PEN grid so Mask section renders here.
-const maskMount = panel.createDiv();
-
-// ---- Color swatches ------------------------------------------------------------------
-panel.createDiv({ cls: "ps-label", text: "COLOR" });
-const swatchRow = panel.createDiv({ cls: "ps-color-swatches" });
+// Color section already rendered above (native color-picker-container).
+// Stub vars so legacy syncControls() reference still works.
 const swatchEls = [];
-for (const c of COLOR_PRESETS) {
-  const sw = swatchRow.createDiv({ cls: "ps-swatch", attr: { title: c } });
-  sw.style.background = c;
-  swatchEls.push({ el: sw, color: c });
-  sw.onclick = () => {
-    cfg.color = c;
-    customPicker.value = c;
-    swatchEls.forEach(s => s.el.classList.toggle("is-active", s.color === c));
-    state.dirty = true; applyActivePen(); persistSoon();
-    syncFineRows();
-  };
-}
-const customPicker = document.createElement("input");
-customPicker.type = "color";
-customPicker.className = "ps-color-custom";
-customPicker.title = "Custom color";
-customPicker.oninput = (e) => {
-  cfg.color = e.target.value;
-  swatchEls.forEach(s => s.el.classList.toggle("is-active", s.color.toLowerCase() === cfg.color.toLowerCase()));
-  state.dirty = true; applyActivePen(); persistSoon();
-  syncFineRows();
-};
-swatchRow.appendChild(customPicker);
+const customPicker = { value: "" };
 
-// ---- Width + Opacity sliders (Paper-Mode style: label row + slider row) -------------
-const wHead = panel.createDiv({ cls: "ps-slabel" });
-wHead.createDiv({ cls: "ps-label", text: "WIDTH" });
-const wValue = wHead.createDiv({ cls: "ps-value", text: "" });
-const wRow = panel.createDiv({ cls: "ps-slider-row" });
-const wSlider = document.createElement("input");
-wSlider.type = "range"; wSlider.min = 1; wSlider.max = 60; wSlider.step = 0.5;
-wRow.appendChild(wSlider);
+// ---- Width control-label slider (label IS the section header) ------------------------
+const wCtrl = buildControlLabelSlider(panel, "Width", 1.5, 1, 60, 0.5, v => `${v}px`);
+const wSlider = wCtrl.input;
+const wValue  = { setText: (t) => { wCtrl.value.textContent = t; wCtrl.reposition && wCtrl.reposition(); } };
 wSlider.oninput = () => {
   cfg.width = parseFloat(wSlider.value);
   wValue.setText(`${cfg.width}px`);
   state.dirty = true; applyActivePen(); persistSoon();
-  if (fineWidth) { fineWidth.input.value = cfg.width; fineWidth.value.setText(`${cfg.width}px`); }
+  if (fineWidth && fineWidth.input.isConnected) {
+    fineWidth.input.value = cfg.width;
+    fineWidth.value.setText(`${cfg.width}px`);
+  }
 };
 
-const oHead = panel.createDiv({ cls: "ps-slabel" });
-oHead.createDiv({ cls: "ps-label", text: "OPACITY" });
-const oValue = oHead.createDiv({ cls: "ps-value", text: "" });
-const oRow = panel.createDiv({ cls: "ps-slider-row" });
-const oSlider = document.createElement("input");
-oSlider.type = "range"; oSlider.min = 0; oSlider.max = 100; oSlider.step = 1;
-oRow.appendChild(oSlider);
+// ---- Opacity control-label slider (label IS the section header) ----------------------
+const oCtrl = buildControlLabelSlider(panel, "Opacity", 100, 0, 100, 1, v => `${v}%`);
+const oSlider = oCtrl.input;
+const oValue  = { setText: (t) => { oCtrl.value.textContent = t; oCtrl.reposition && oCtrl.reposition(); } };
 oSlider.oninput = () => {
   cfg.opacity = parseFloat(oSlider.value);
   oValue.setText(`${cfg.opacity}%`);
   state.dirty = true; applyActivePen(); persistSoon();
-  if (fineOp) { fineOp.input.value = cfg.opacity; fineOp.value.setText(`${cfg.opacity}%`); }
+  if (fineOp && fineOp.input.isConnected) {
+    fineOp.input.value = cfg.opacity;
+    fineOp.value.setText(`${cfg.opacity}%`);
+  }
 };
 
 function syncControls() {
   const p = activePresetCopy();
   wSlider.value = p.strokeWidth; wValue.setText(`${p.strokeWidth}px`);
   oSlider.value = p.opacity;     oValue.setText(`${p.opacity}%`);
-  customPicker.value = p.strokeColor && /^#[0-9a-f]{6}$/i.test(p.strokeColor) ? p.strokeColor : "#000000";
-  swatchEls.forEach(s => s.el.classList.toggle("is-active", s.color.toLowerCase() === (p.strokeColor||"").toLowerCase()));
+  cfg.color = p.strokeColor;
+  window.__penStylesRefreshColor?.();
+  // If fine-tune popover is open, rebuild it for the new active preset.
+  if (typeof syncFineRowsLive === "function") syncFineRowsLive();
 }
 syncControls();
 
-// ---- Action buttons ------------------------------------------------------------------
-// ---- Action bar (icon-only) + paper feel pill ---------------------------------------
-const actions = panel.createDiv({ cls: "ps-actions" });
-const btnApply = actions.createDiv({ cls: "ps-icon-btn", attr: { title: "Activate pen" } });
-btnApply.innerHTML = ico("play");
-btnApply.onclick = () => { applyActivePen(); new Notice(`Pen → ${cfg.active}`); };
+// ---- Action bar (native fieldset + buttonList + zIndexButton) ------------------------
+// Helper: native ToolIcon button with svg + tooltip (used inside popovers).
+function toolIconBtn(parent, title, iconKey, onClick, extraCls = "") {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "ToolIcon ToolIcon_size_medium" + (extraCls ? " " + extraCls : "");
+  btn.title = title;
+  btn.setAttribute("aria-label", title);
+  const inner = document.createElement("div");
+  inner.className = "ToolIcon__icon";
+  inner.innerHTML = ICON[iconKey] || "";
+  btn.appendChild(inner);
+  btn.onclick = onClick;
+  parent.appendChild(btn);
+  return btn;
+}
+// Helper: native action-row button (matches Layers / zIndex buttons).
+// `labelText` (optional) appends a visible <span> so the toolbar buttons
+// can show "Activate" / "Reset" / "Save" / etc. beneath the icon.
+function zIndexBtn(parent, title, iconKey, onClick, labelText) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "zIndexButton";
+  btn.title = title;
+  btn.setAttribute("aria-label", title);
+  btn.innerHTML = ICON[iconKey] || "";
+  if (labelText) {
+    const lbl = document.createElement("span");
+    lbl.textContent = labelText;
+    btn.appendChild(lbl);
+  }
+  btn.onclick = onClick;
+  parent.appendChild(btn);
+  return btn;
+}
 
-const btnClear = actions.createDiv({ cls: "ps-icon-btn", attr: { title: "Reset to default freedraw" } });
-btnClear.innerHTML = ico("undo");
-btnClear.onclick = () => { clearPen(); new Notice("Pen → default freedraw"); };
+// ---- Tools row (Activate + Reset + Save + Paper + Fine-tune + Mask) -----------------
+// Single fieldset+legend+buttonList row so the six zIndexButton entries
+// share horizontal space and the panel stays compact (wraps if needed).
+const toolsFs = document.createElement("fieldset");
+toolsFs.className = "ps-toolbar";
+const toolsLg = document.createElement("legend");
+toolsLg.textContent = "Tools";
+toolsFs.appendChild(toolsLg);
+const toolsRow = document.createElement("div");
+toolsRow.className = "buttonList";
+toolsFs.appendChild(toolsRow);
+panel.appendChild(toolsFs);
 
-const btnSave = actions.createDiv({ cls: "ps-icon-btn", attr: { title: "Save current as preset" } });
-btnSave.innerHTML = ico("save");
-btnSave.onclick = async () => {
+zIndexBtn(toolsRow, "Activate pen", "play",
+  () => { applyActivePen(); new Notice(`Pen → ${cfg.active}`); }, "Activate");
+zIndexBtn(toolsRow, "Reset to default freedraw", "undo",
+  () => { clearPen(); new Notice("Pen → default freedraw"); }, "Reset");
+zIndexBtn(toolsRow, "Save current as preset", "save", async () => {
   const snap = activePresetCopy();
   let name = await utils.inputPrompt("Save current pen as preset", "My Pen", "My Pen");
   if (!name) return;
@@ -1274,68 +1734,63 @@ btnSave.onclick = async () => {
   cfg.active = name;
   cfg.width = cfg.color = cfg.opacity = null;
   state.dirty = true; persistSoon();
-  rebuildGrid(); syncControls(); syncFineRows();
+  rebuildGrid(); syncControls();
   new Notice(`Saved preset: ${name}`);
-};
+}, "Save");
 
-const paperToggle = actions.createDiv({ cls: "ps-paper-pill", attr: { title: "Paper feel modifier" } });
-paperToggle.innerHTML = `<span class="ps-pp-left">${ico("paper")}<span>Paper</span></span><span class="ps-toggle-pill"></span>`;
-function syncPaperToggle() { paperToggle.classList.toggle("is-on", !!cfg.paperFeel); }
+const paperBtn = document.createElement("button");
+paperBtn.type = "button";
+paperBtn.className = "zIndexButton";
+paperBtn.title = "Paper feel modifier";
+paperBtn.setAttribute("aria-label", "Paper");
+paperBtn.innerHTML = `${ICON.paper}`;
+{
+  const _lbl = document.createElement("span");
+  _lbl.textContent = "Paper";
+  paperBtn.appendChild(_lbl);
+}
+toolsRow.appendChild(paperBtn);
+function syncPaperToggle() {
+  paperBtn.setAttribute("aria-pressed", cfg.paperFeel ? "true" : "false");
+  paperBtn.setAttribute("data-active", cfg.paperFeel ? "true" : "false");
+}
 syncPaperToggle();
-paperToggle.onclick = () => {
+paperBtn.onclick = () => {
   cfg.paperFeel = !cfg.paperFeel;
   syncPaperToggle();
   state.dirty = true; applyActivePen(); persistSoon();
-  if (cfg.fineOpen) buildFineRows();
 };
 
-// =========================================================================================
-// Mask Highlighter collapsible section (mounted under PEN grid)
-// =========================================================================================
-const maskToggle = maskMount.createDiv({ cls: "ps-fine-toggle" });
-maskToggle.innerHTML = `<span style="display:flex;align-items:center;gap:6px">${ico("mask")}<span>Mask Highlighter</span></span><span class="ps-chev">${ICON.chev}</span>`;
-const maskBox = maskMount.createDiv({ cls: "ps-mask" });
-
-function setMaskOpen(open) {
-  cfg.maskOpen = !!open;
-  maskToggle.classList.toggle("is-open", cfg.maskOpen);
-  maskBox.classList.toggle("is-open", cfg.maskOpen);
-  state.dirty = true; persistSoon();
-}
-// Click behavior on the section header:
-//   - Single click  -> open/close the section.
-//   - Two clicks within 350ms -> flip ALL masks visible <-> hidden (also
-//     undoes the two open/close toggles, so section state stays put).
-// Custom detection (instead of native ondblclick) works reliably on touch
-// devices where the OS may suppress dblclick after a tap.
-var maskClickTimer = null;
-var maskClickCount = 0;
-maskToggle.onclick = async (e) => {
-  maskClickCount++;
-  if (maskClickCount === 1) {
-    setMaskOpen(!cfg.maskOpen);
-    maskClickTimer = setTimeout(() => { maskClickCount = 0; }, 350);
-    return;
+function makeTriggerBtn(label, iconKey, onClick, visibleLabel) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "zIndexButton";
+  btn.title = label;
+  btn.setAttribute("aria-label", label);
+  btn.innerHTML = `${ICON[iconKey] || ""}`;
+  if (visibleLabel) {
+    const lbl = document.createElement("span");
+    lbl.textContent = visibleLabel;
+    btn.appendChild(lbl);
   }
-  // Second click within window: undo the first open/close and flip masks.
-  clearTimeout(maskClickTimer);
-  maskClickCount = 0;
-  setMaskOpen(!cfg.maskOpen);   // revert section state
-  await toggleMasks();
-  refreshMaskStatus();
-};
-if (cfg.maskOpen) setMaskOpen(true);
+  btn.onclick = onClick;
+  toolsRow.appendChild(btn);
+  return btn;
+}
 
-const maskStatusEl = maskBox.createDiv({ cls: "ps-mask-status" });
-const maskListEl = maskBox.createDiv({ cls: "ps-mask-list" });
+const fineTriggerBtn = makeTriggerBtn("Fine-tune", "sliders", (e) => {
+  e.stopPropagation();
+  openFineTunePopover(fineTriggerBtn);
+}, "Tune");
+const maskTriggerBtn = makeTriggerBtn("Mask Highlighter", "mask", (e) => {
+  e.stopPropagation();
+  openMaskPopover(maskTriggerBtn);
+}, "Mask");
 
 function scrollToMask(m) {
   // Read fresh: the captured m may be stale after a scene update.
   const fresh = (api.getSceneElements() || []).find(el => el.id === m.id) || m;
   try {
-    // Switch to selection tool + select + zoom in ONE updateScene so
-    // Excalidraw's tool state doesn't override the selection set by a
-    // later call (which was the "needs double click" bug).
     api.updateScene({
       appState: {
         activeTool: { type: "selection", lastActiveTool: null, locked: false },
@@ -1344,16 +1799,11 @@ function scrollToMask(m) {
       commitToHistory: false
     });
     if (typeof api.scrollToContent === "function") {
-      try {
-        api.scrollToContent([fresh], { fitToContent: true, animate: true, duration: 280 });
-      } catch (_) {
-        api.scrollToContent([fresh]);
-      }
+      try { api.scrollToContent([fresh], { fitToContent: true, animate: true, duration: 280 }); }
+      catch (_) { api.scrollToContent([fresh]); }
     } else if (typeof ea.targetView?.zoomToFit === "function") {
       ea.targetView.zoomToFit([fresh]);
     }
-    // Re-apply selection AFTER scroll (scroll may clear it depending on
-    // plugin version). 50ms is enough for the animate frame to settle.
     setTimeout(() => {
       try {
         api.updateScene({
@@ -1365,127 +1815,12 @@ function scrollToMask(m) {
   } catch (e) { console.warn("scrollToMask failed", e); }
 }
 
-function refreshMaskStatus() {
-  const masks = getAllMasks();
-  const vis = masks.filter(m => (m.customData.maskState || "visible") === "visible").length;
-  maskStatusEl.innerHTML = `<b>${masks.length}</b> mask(s) · <b>${vis}</b> visible`;
-  maskListEl.empty();
-  masks.forEach((m, i) => {
-    const item = maskListEl.createDiv({ cls: "ps-mask-item" });
-    const state = m.customData.maskState || "visible";
-    if (state !== "visible") item.classList.add("is-hidden");
-    const tint = m.customData.maskTint || m.strokeColor || cfg.maskColor;
-
-    const colorInp = document.createElement("input");
-    colorInp.type = "color"; colorInp.className = "ps-mask-color"; colorInp.value = tint;
-    colorInp.title = "Mask color";
-    colorInp.onclick = (e) => e.stopPropagation();
-    // Live-apply on input WITHOUT rebuilding the list (rebuild would tear down
-    // the open color picker DOM, snapping it shut and reverting the swatch).
-    colorInp.oninput = async (e) => {
-      await setMaskColor(m, e.target.value);
-    };
-    // Commit + refresh list only after the picker closes (change fires once).
-    colorInp.onchange = async (e) => {
-      await setMaskColor(m, e.target.value);
-      refreshMaskStatus();
-    };
-    item.appendChild(colorInp);
-
-    const name = item.createDiv({ cls: "ps-mask-name", text: `Mask #${i + 1}` });
-    name.onclick = () => scrollToMask(m);
-
-    const visBtn = item.createDiv({ cls: "ps-mask-mini" });
-    visBtn.title = state === "visible" ? "Hide this mask" : "Show this mask";
-    visBtn.innerHTML = state === "visible" ? ICON.eye : ICON.eyeOff;
-    visBtn.onclick = async (e) => {
-      e.stopPropagation();
-      await setMaskVisible(m, state !== "visible");
-      refreshMaskStatus();
-    };
-
-    const delBtn = item.createDiv({ cls: "ps-mask-mini ps-danger" });
-    delBtn.title = "Delete this mask";
-    delBtn.innerHTML = ICON.trash;
-    delBtn.onclick = async (e) => {
-      e.stopPropagation();
-      await deleteMask(m);
-      refreshMaskStatus();
-    };
-  });
-}
-refreshMaskStatus();
-// Expose for the persistent canvas listener installed earlier (before panel build).
-state.refreshMaskStatus = refreshMaskStatus;
-
-// Draw mask button removed: Mask Highlighter pen preset in the PEN grid
-// handles arming/disarming the mask listener now.
-
-// 4 icon-only buttons in single row — Show / Hide / Toggle / Clear
-const maskActions = maskBox.createDiv({ cls: "ps-mask-actions" });
-const showB = maskActions.createDiv({ cls: "ps-icon-btn", attr: { title: "Show masks" } });
-showB.innerHTML = ico("eye");
-showB.onclick = async () => { await setMasksVisible(true); refreshMaskStatus(); };
-const hideB = maskActions.createDiv({ cls: "ps-icon-btn", attr: { title: "Hide masks" } });
-hideB.innerHTML = ico("eyeOff");
-hideB.onclick = async () => { await setMasksVisible(false); refreshMaskStatus(); };
-const togB = maskActions.createDiv({ cls: "ps-icon-btn", attr: { title: "Toggle masks" } });
-togB.innerHTML = ico("refresh");
-togB.onclick = async () => { await toggleMasks(); refreshMaskStatus(); };
-const clrB = maskActions.createDiv({ cls: "ps-icon-btn ps-btn-danger", attr: { title: "Click twice to clear all masks" } });
-clrB.innerHTML = ico("trash");
-let clrArmed = false; let clrTimer = null;
-function disarmClear() {
-  clrArmed = false;
-  clrB.classList.remove("is-armed");
-  clrB.innerHTML = ico("trash");
-  if (clrTimer) { clearTimeout(clrTimer); clrTimer = null; }
-}
-clrB.onclick = async () => {
-  if (clrArmed) {
-    disarmClear();
-    await clearAllMasks();
-    refreshMaskStatus();
-    return;
-  }
-  clrArmed = true;
-  clrB.classList.add("is-armed");
-  clrB.innerHTML = `${ico("trash")}`;
-  clrB.title = "Click again to confirm delete all";
-  new Notice("Click trash again to delete all masks");
-  clrTimer = setTimeout(disarmClear, 2500);
-};
-
-// Mask color / width / opacity controls removed: the global PEN COLOR / WIDTH /
-// OPACITY rows now drive the active preset, including Mask Highlighter.
-
 // =========================================================================================
-// Fine-tune collapsible section (replaces separate Pen Settings panel)
+// Fine-tune popover — _tune draft override + builder.
 // =========================================================================================
-const fineToggle = panel.createDiv({ cls: "ps-fine-toggle" });
-fineToggle.innerHTML = `<span style="display:flex;align-items:center;gap:6px">${ico("sliders")}<span>Fine-tune</span></span><span class="ps-chev">${ICON.chev}</span>`;
-const fineBox = panel.createDiv({ cls: "ps-fine" });
-
-function setFineOpen(open) {
-  cfg.fineOpen = !!open;
-  fineToggle.classList.toggle("is-open", cfg.fineOpen);
-  fineBox.classList.toggle("is-open", cfg.fineOpen);
-  state.dirty = true; persistSoon();
-}
-panel.__setFineOpen = setFineOpen;
-fineToggle.onclick = () => setFineOpen(!cfg.fineOpen);
-if (cfg.fineOpen || wantFine) setFineOpen(true);
-
-// Build fine-tune rows; rows mutate the active preset's customDataopts directly via
-// a derived "fine draft" object refreshed when preset switches.
-var fineRows = [];
 var fineWidth = null, fineOp = null;
 
 function getActivePenOptions() {
-  // Always tune the *active* preset object (or its custom override). We mutate a working
-  // copy stored on cfg.customPresets when user edits builtin: clone into customPresets
-  // with same name suffixed " (tuned)" so builtins stay pure.
-  // Simpler: store live tuning in cfg._tune and merge in activePresetCopy.
   if (!cfg._tune) cfg._tune = {};
   if (!cfg._tune[cfg.active]) {
     const p = getPreset(cfg.active);
@@ -1494,7 +1829,7 @@ function getActivePenOptions() {
   return cfg._tune[cfg.active];
 }
 
-// Override activePresetCopy + applyActivePen to honor _tune
+// Override activePresetCopy so it honours the _tune draft.
 const origActivePresetCopy = activePresetCopy;
 activePresetCopy = function() {
   const s = origActivePresetCopy();
@@ -1503,19 +1838,58 @@ activePresetCopy = function() {
   return s;
 };
 
+// Popover slider — stacked-head layout (label + value on one row, slider
+// below). Mirrors Paper Mode's pattern. Native .range-wrapper/.value-bubble
+// don't lay out cleanly inside the narrow popover Island, so we use a
+// plain stacked input here. Width/Opacity sliders OUTSIDE popovers keep
+// the native range-wrapper via buildControlLabelSlider.
+function buildStackedSlider(parent, label, value, min, max, step, fmt) {
+  // Clean native markup — no inline styles. The scoped popover CSS paints
+  // flex/column layout, head row, value coloring, and full-width range.
+  const lbl = document.createElement("label");
+  lbl.className = "control-label";
+
+  const head = document.createElement("div");
+  const nameSpan = document.createElement("span");
+  nameSpan.textContent = label;
+  const valSpan = document.createElement("span");
+  valSpan.className = "ps-val";
+  valSpan.textContent = fmt(value);
+  head.appendChild(nameSpan);
+  head.appendChild(valSpan);
+  lbl.appendChild(head);
+
+  const input = document.createElement("input");
+  input.type = "range";
+  input.className = "range-input";
+  input.min = min; input.max = max; input.step = step;
+  input.value = value;
+  lbl.appendChild(input);
+
+  parent.appendChild(lbl);
+  return { input, value: valSpan, reposition: null };
+}
+
 function sliderRow(parent, label, value, min, max, step, fmt, onChange) {
-  const row = parent.createDiv({ cls: "ps-inline" });
-  row.createDiv({ cls: "ps-label", text: label });
-  const i = document.createElement("input");
-  i.type = "range"; i.min = min; i.max = max; i.step = step; i.value = value;
-  row.appendChild(i);
-  const v = row.createDiv({ cls: "ps-value", text: fmt(value) });
-  i.oninput = () => { const x = parseFloat(i.value); v.setText(fmt(x)); onChange(x); applyActivePen(); state.dirty = true; persistSoon(); };
-  return { input: i, value: v };
+  const ctrl = buildStackedSlider(parent, label, value, min, max, step, fmt);
+  ctrl.input.oninput = () => {
+    const x = parseFloat(ctrl.input.value);
+    ctrl.value.textContent = fmt(x);
+    onChange(x); applyActivePen(); state.dirty = true; persistSoon();
+  };
+  return {
+    input: ctrl.input,
+    value: { setText: (t) => { ctrl.value.textContent = t; } }
+  };
 }
 function selectRow(parent, label, options, value, onChange) {
-  const r = parent.createDiv({ cls: "ps-inline" });
-  r.createDiv({ cls: "ps-label", text: label });
+  // Native pattern: <label class="control-label"><span>TEXT</span><select>…</select></label>.
+  // No inline styles — .control-label paints flex+typography natively.
+  const lbl = document.createElement("label");
+  lbl.className = "control-label";
+  const lblText = document.createElement("span");
+  lblText.textContent = label;
+  lbl.appendChild(lblText);
   const s = document.createElement("select");
   for (const o of options) {
     const opt = document.createElement("option");
@@ -1523,48 +1897,476 @@ function selectRow(parent, label, options, value, onChange) {
     if (o === value) opt.selected = true;
     s.appendChild(opt);
   }
-  r.appendChild(s);
+  lbl.appendChild(s);
+  parent.appendChild(lbl);
   s.onchange = () => { onChange(s.value); applyActivePen(); state.dirty = true; persistSoon(); };
   return s;
 }
 function checkRow(parent, label, value, onChange) {
-  const r = parent.createDiv({ cls: "ps-inline" });
-  r.createDiv({ cls: "ps-label", text: label }).style.flex = "1";
+  const lbl = document.createElement("label");
+  lbl.className = "control-label";
+  const lblText = document.createElement("span");
+  lblText.textContent = label;
+  lbl.appendChild(lblText);
   const c = document.createElement("input");
-  c.type = "checkbox"; c.className = "ps-check"; c.checked = !!value;
-  r.appendChild(c);
+  c.type = "checkbox"; c.checked = !!value;
+  lbl.appendChild(c);
+  parent.appendChild(lbl);
   c.onchange = () => { onChange(c.checked); applyActivePen(); state.dirty = true; persistSoon(); };
   return c;
 }
 
-function buildFineRows() {
+function buildFineRows(fineBox) {
   fineBox.empty();
   const t = getActivePenOptions();
   if (!t) { fineBox.createDiv({ text: "No active preset." }); return; }
   const o = t.options;
   const p = activePresetCopy();
 
-  fineWidth = sliderRow(fineBox, "Width",     p.strokeWidth, 1, 40, 0.5, v => `${v}px`, v => {
+  const fineHead = document.createElement("div");
+  fineHead.className = "color-picker__heading";
+  fineHead.textContent = "Fine-tune";
+  fineBox.appendChild(fineHead);
+
+  fineWidth = sliderRow(fineBox, "Width", p.strokeWidth, 1, 40, 0.5, v => `${v}px`, v => {
     cfg.width = v; wSlider.value = v; wValue.setText(`${v}px`);
   });
-  fineOp    = sliderRow(fineBox, "Opacity",   p.opacity, 0, 100, 1, v => `${v}%`, v => {
+  fineOp = sliderRow(fineBox, "Opacity", p.opacity, 0, 100, 1, v => `${v}%`, v => {
     cfg.opacity = v; oSlider.value = v; oValue.setText(`${v}%`);
   });
-  sliderRow(fineBox, "Thinning",   o.thinning,   -1, 1, 0.05, v => v.toFixed(2), v => o.thinning = v);
-  sliderRow(fineBox, "Smoothing",  o.smoothing,   0, 1, 0.05, v => v.toFixed(2), v => o.smoothing = v);
-  sliderRow(fineBox, "Streamline", o.streamline,  0, 1, 0.05, v => v.toFixed(2), v => o.streamline = v);
+  sliderRow(fineBox, "Thinning",    o.thinning,   -1, 1, 0.05, v => v.toFixed(2), v => o.thinning   = v);
+  sliderRow(fineBox, "Smoothing",   o.smoothing,   0, 1, 0.05, v => v.toFixed(2), v => o.smoothing  = v);
+  sliderRow(fineBox, "Streamline",  o.streamline,  0, 1, 0.05, v => v.toFixed(2), v => o.streamline = v);
   sliderRow(fineBox, "Taper start", +o.start.taper || 0, 0, 100, 1, v => `${v}`, v => o.start.taper = v);
   sliderRow(fineBox, "Taper end",   +o.end.taper   || 0, 0, 100, 1, v => `${v}`, v => o.end.taper   = v);
-  selectRow(fineBox, "Easing",          EASINGS, o.easing, v => o.easing = v);
+  selectRow(fineBox, "Easing",            EASINGS, o.easing, v => o.easing = v);
   checkRow (fineBox, "Constant pressure", t.constantPressure, v => t.constantPressure = v);
   checkRow (fineBox, "Highlighter mode",  t.highlighter,      v => t.highlighter = v);
   checkRow (fineBox, "Real pressure",    !o.simulatePressure, v => o.simulatePressure = !v);
 }
-function syncFineRows() { if (cfg.fineOpen) buildFineRows(); }
-buildFineRows();
+
+// ---- Anchored popover infra ----------------------------------------------------------
+// Wraps content in native color-picker-content/properties-content so
+// Excalidraw's CSS paints typography + spacing identically to the
+// color popover. dlg is the .color-picker-content node — append rows
+// directly to it and let .control-label paint natively.
+function buildAnchoredPopover(id, ariaLabel) {
+  // Outer wrapper copied verbatim from Paper Mode's buildColorPopover:
+  //   <div id position:absolute z:9999>
+  //     <div.Island --padding=3 max-width=13rem>
+  //       <div role=dialog aria-modal aria-label>
+  //         <div.color-picker-content.properties-content tabindex=-1>
+  //           …rows…
+  //         </div></div></div></div>
+  const outer = document.createElement("div");
+  outer.id = id;
+  outer.style.cssText = "position:absolute;z-index:9999;";
+  const island = document.createElement("div");
+  island.className = "Island";
+  island.style.setProperty("--padding", "3");
+  // No inline max-width — scoped CSS per popover id paints it (Fine-tune 18rem,
+  // Mask 13rem) so the wider Fine-tune rule is not blocked by inline style.
+  outer.appendChild(island);
+  const dlgRole = document.createElement("div");
+  dlgRole.setAttribute("role", "dialog");
+  dlgRole.setAttribute("aria-modal", "true");
+  dlgRole.setAttribute("aria-label", ariaLabel);
+  island.appendChild(dlgRole);
+  const content = document.createElement("div");
+  content.className = "color-picker-content properties-content";
+  content.tabIndex = -1;
+  dlgRole.appendChild(content);
+
+  // Pin button (top-right of Island). When pinned, outside-click is
+  // ignored by bindPopoverDismiss(); Esc still always closes.
+  const pinBtn = document.createElement("button");
+  pinBtn.type = "button";
+  pinBtn.className = "ps-pin-btn";
+  pinBtn.title = "Pin popover (stay open on outside click)";
+  pinBtn.setAttribute("aria-label", "Pin popover");
+  pinBtn.setAttribute("aria-pressed", "false");
+  pinBtn.innerHTML = ICON.pin;
+  outer.dataset.pinned = "false";
+  pinBtn.onclick = (e) => {
+    e.stopPropagation();
+    const pinned = outer.dataset.pinned === "true";
+    outer.dataset.pinned = pinned ? "false" : "true";
+    pinBtn.setAttribute("aria-pressed", pinned ? "false" : "true");
+    pinBtn.title = pinned
+      ? "Pin popover (stay open on outside click)"
+      : "Unpin popover";
+  };
+  island.appendChild(pinBtn);
+
+  return { outer, island, dlg: content };
+}
+// Anchor popover to the trigger button — same formula as Paper Mode's
+// color popover (offset right + 28, top - 4). After placement, clamp
+// the top so the popover stays inside the host viewport.
+function anchorPopover(pop, triggerBtn) {
+  const host = view.contentEl.querySelector(".excalidraw") || view.contentEl;
+  host.appendChild(pop);
+  const btnRect = triggerBtn.getBoundingClientRect();
+  const hostRect = host.getBoundingClientRect();
+  let left = btnRect.right - hostRect.left + 28;
+  let top  = btnRect.top   - hostRect.top  - 4;
+  pop.style.left = `${Math.round(left)}px`;
+  pop.style.top  = `${Math.round(top)}px`;
+  // Clamp so a tall popover near the viewport bottom doesn't overflow.
+  const popH  = pop.offsetHeight;
+  const hostH = host.getBoundingClientRect().height;
+  if (top + popH > hostH - 8) {
+    top = Math.max(8, hostH - popH - 8);
+    pop.style.top = `${Math.round(top)}px`;
+  }
+}
+// Anchor a popover to the SIDE of the Pen Styles panel (not the trigger).
+// Used by Fine-tune + Mask popovers whose triggers sit near the bottom of
+// the panel — anchoring to them pushes the popover off-screen. The color
+// popover keeps `anchorPopover` (anchored to the color swatch trigger
+// near the panel top, which already aligns perfectly).
+function anchorPopoverToSide(pop, host) {
+  host.appendChild(pop);
+  // Anchor to the active color-picker button (top of panel) so Fine-tune
+  // and Mask popovers land at the IDENTICAL position as the color popover.
+  // Fall back to the side wrap if no active color button exists.
+  const colorBtn = document.querySelector(`#${PANEL_ID} .color-picker__button.active-color`);
+  const anchor = colorBtn || document.getElementById(PEN_SIDE_WRAP_ID) || host;
+  const aRect = anchor.getBoundingClientRect();
+  const hostRect = host.getBoundingClientRect();
+  let left = aRect.right - hostRect.left + 28;
+  let top  = aRect.top   - hostRect.top - 4;
+  pop.style.left = `${Math.round(left)}px`;
+  pop.style.top  = `${Math.round(top)}px`;
+  // Clamp so a tall popover doesn't overflow the host bottom.
+  const popH  = pop.offsetHeight;
+  const hostH = hostRect.height;
+  if (top + popH > hostH - 8) {
+    top = Math.max(8, hostH - popH - 8);
+    pop.style.top = `${Math.round(top)}px`;
+  }
+}
+
+function bindPopoverDismiss(pop, triggerBtn, onClose) {
+  setTimeout(() => {
+    const onDown = (ev) => {
+      if (pop.contains(ev.target) || triggerBtn.contains(ev.target)) return;
+      // When pinned, outside-click does NOT dismiss. Esc still closes.
+      if (pop.dataset.pinned === "true") return;
+      cleanup();
+    };
+    const onKey = (ev) => { if (ev.key === "Escape") { ev.stopPropagation(); cleanup(); } };
+    function cleanup() {
+      document.removeEventListener("mousedown", onDown, true);
+      document.removeEventListener("keydown", onKey, true);
+      try { pop.remove(); } catch (_) {}
+      if (typeof onClose === "function") onClose();
+    }
+    document.addEventListener("mousedown", onDown, true);
+    document.addEventListener("keydown", onKey, true);
+    pop.__close = cleanup;
+  }, 0);
+}
+
+function openFineTunePopover(triggerBtn) {
+  // Toggle off if already open.
+  const existing = document.getElementById("pen-styles-finetune-popover");
+  if (existing) { existing.__close ? existing.__close() : existing.remove(); return; }
+  const { outer, dlg } = buildAnchoredPopover("pen-styles-finetune-popover", "Fine-tune pen");
+  buildFineRows(dlg);
+  const host = view.contentEl.querySelector(".excalidraw") || view.contentEl;
+  anchorPopoverToSide(outer, host);
+  bindPopoverDismiss(outer, triggerBtn);
+}
+// Live re-render of the fine-tune popover (used when the global color/
+// preset selection changes while it's open). No-op if popover is closed.
+function syncFineRowsLive() {
+  const pop = document.getElementById("pen-styles-finetune-popover");
+  if (!pop) return;
+  const dlg = pop.querySelector("[role='dialog']");
+  if (dlg) buildFineRows(dlg);
+}
+// Public so the toggle-panel branch at script top can open Fine-tune via
+// the same code path (replaces the old panel.__setFineOpen accordion).
+panel.__openFineTune = () => openFineTunePopover(fineTriggerBtn);
+
+// =========================================================================================
+// Mask Highlighter popover — status + list + actions.
+// =========================================================================================
+var maskStatusEl = null, maskListEl = null;
+function refreshMaskStatus() {
+  if (!maskStatusEl || !maskListEl || !maskStatusEl.isConnected) return;
+  const masks = getAllMasks();
+  const vis = masks.filter(m => (m.customData.maskState || "visible") === "visible").length;
+  maskStatusEl.innerHTML = `<b>${masks.length}</b> mask(s) · <b>${vis}</b> visible`;
+  maskListEl.empty();
+  masks.forEach((m, i) => {
+    const item = maskListEl.createDiv({ cls: "ps-mask-item" });
+    const mstate = m.customData.maskState || "visible";
+    if (mstate !== "visible") item.classList.add("is-hidden");
+    const tint = m.customData.maskTint || m.strokeColor || cfg.maskColor;
+
+    // Color swatch — native .color-picker__button swatch chrome.
+    const colorInp = document.createElement("input");
+    colorInp.type = "color";
+    colorInp.className = "color-picker__button";
+    colorInp.value = tint;
+    colorInp.title = "Mask color";
+    colorInp.style.setProperty("--swatch-color", tint);
+    colorInp.onclick = (e) => e.stopPropagation();
+    colorInp.oninput  = async (e) => { await setMaskColor(m, e.target.value); };
+    colorInp.onchange = async (e) => { await setMaskColor(m, e.target.value); refreshMaskStatus(); };
+    item.appendChild(colorInp);
+
+    const name = item.createDiv({ cls: "ps-mask-name", text: `Mask #${i + 1}` });
+    name.onclick = () => scrollToMask(m);
+
+    // Native zIndexButton chrome for eye + trash, identical to Layers row.
+    const visBtn = document.createElement("button");
+    visBtn.type = "button";
+    visBtn.className = "zIndexButton";
+    visBtn.title = mstate === "visible" ? "Hide this mask" : "Show this mask";
+    visBtn.innerHTML = mstate === "visible" ? ICON.eye : ICON.eyeOff;
+    visBtn.onclick = async (e) => {
+      e.stopPropagation();
+      await setMaskVisible(m, mstate !== "visible");
+      refreshMaskStatus();
+    };
+    item.appendChild(visBtn);
+
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "zIndexButton";
+    delBtn.title = "Delete this mask";
+    delBtn.innerHTML = ICON.trash;
+    delBtn.onclick = async (e) => {
+      e.stopPropagation();
+      await deleteMask(m);
+      refreshMaskStatus();
+    };
+    item.appendChild(delBtn);
+  });
+}
+// Expose for the persistent canvas listener installed earlier.
+state.refreshMaskStatus = refreshMaskStatus;
+
+// Explicit refresh path — call after every mask mutation (create / toggle /
+// delete / color change / visibility). The api.onChange subscription is a
+// fallback; some mask mutations don't propagate through normal scene diffs
+// or the diff key (count + visKey) misses fast-burst changes.
+function notifyMaskChange() {
+  if (typeof state.refreshMaskStatus === "function") state.refreshMaskStatus();
+  const pop = document.getElementById("pen-styles-mask-popover");
+  if (pop && typeof pop.__refreshList === "function") pop.__refreshList();
+}
+
+function openMaskPopover(triggerBtn) {
+  const existing = document.getElementById("pen-styles-mask-popover");
+  if (existing) { existing.__close ? existing.__close() : existing.remove(); return; }
+  const { outer, dlg } = buildAnchoredPopover("pen-styles-mask-popover", "Mask Highlighter");
+
+  const header = document.createElement("div");
+  header.className = "color-picker__heading";
+  header.textContent = "Mask Highlighter";
+  dlg.appendChild(header);
+
+  // Status uses native .control-label typography (light, muted).
+  maskStatusEl = document.createElement("div");
+  maskStatusEl.className = "control-label";
+  dlg.appendChild(maskStatusEl);
+  maskListEl   = dlg.createDiv({ cls: "ps-mask-list" });
+
+  // Action row: native fieldset+legend+buttonList chrome.
+  const maskActionsFs = document.createElement("fieldset");
+  const maskActionsLg = document.createElement("legend");
+  maskActionsLg.textContent = "Actions";
+  maskActionsFs.appendChild(maskActionsLg);
+  const maskActions = document.createElement("div");
+  maskActions.className = "buttonList";
+  maskActionsFs.appendChild(maskActions);
+  dlg.appendChild(maskActionsFs);
+  zIndexBtn(maskActions, "Show masks", "eye",
+    async () => { await setMasksVisible(true);  refreshMaskStatus(); });
+  zIndexBtn(maskActions, "Hide masks", "eyeOff",
+    async () => { await setMasksVisible(false); refreshMaskStatus(); });
+  zIndexBtn(maskActions, "Toggle masks", "refresh",
+    async () => { await toggleMasks(); refreshMaskStatus(); });
+  const clrB = zIndexBtn(maskActions, "Click twice to clear all masks", "trash", null);
+  let clrArmed = false; let clrTimer = null;
+  function disarmClear() {
+    clrArmed = false;
+    clrB.classList.remove("is-armed");
+    clrB.title = "Click twice to clear all masks";
+    if (clrTimer) { clearTimeout(clrTimer); clrTimer = null; }
+  }
+  clrB.onclick = async () => {
+    if (clrArmed) {
+      disarmClear();
+      await clearAllMasks();
+      refreshMaskStatus();
+      return;
+    }
+    clrArmed = true;
+    clrB.classList.add("is-armed");
+    clrB.title = "Click again to confirm delete all";
+    new Notice("Click trash again to delete all masks");
+    clrTimer = setTimeout(disarmClear, 2500);
+  };
+
+  // Explicit-refresh hook for notifyMaskChange() — primary live-update path
+  // since some mask scene mutations may not roundtrip via api.onChange.
+  outer.__refreshList = refreshMaskStatus;
+  const host = view.contentEl.querySelector(".excalidraw") || view.contentEl;
+  anchorPopoverToSide(outer, host);
+  // Paint initial mask state — MUST run AFTER anchorPopoverToSide() so
+  // maskStatusEl.isConnected is true (refreshMaskStatus early-returns
+  // otherwise). Was previously called before append → empty list bug.
+  refreshMaskStatus();
+
+  // Live refresh: when masks are added/removed/changed (e.g. user keeps
+  // drawing with mask highlighter while popover open), the list + count
+  // re-render automatically. Throttle to coalesce burst onChange fires.
+  let pending = false, lastCount = -1, lastVisKey = "";
+  const tickRefresh = () => {
+    pending = false;
+    if (!maskStatusEl || !maskListEl || !maskStatusEl.isConnected) return;
+    // Cheap diff: rebuild only if mask count or visibility set changed.
+    const masks = getAllMasks();
+    const visKey = masks.map(m => (m.customData?.maskState || "visible")[0] + (m.customData?.maskTint || m.strokeColor || "")).join(",");
+    if (masks.length === lastCount && visKey === lastVisKey) return;
+    lastCount = masks.length; lastVisKey = visKey;
+    refreshMaskStatus();
+  };
+  const offChange = api.onChange(() => {
+    if (pending) return;
+    pending = true;
+    setTimeout(tickRefresh, 120);
+  });
+  // Initial baseline so first scheduled tick has accurate diff state.
+  {
+    const masks0 = getAllMasks();
+    lastCount = masks0.length;
+    lastVisKey = masks0.map(m => (m.customData?.maskState || "visible")[0] + (m.customData?.maskTint || m.strokeColor || "")).join(",");
+  }
+
+  bindPopoverDismiss(outer, triggerBtn, () => {
+    // null refs so refreshMaskStatus from canvas listener becomes a no-op.
+    maskStatusEl = null; maskListEl = null;
+    try { offChange?.(); } catch (_) {}
+  });
+}
+
+// If user pressed the Pen Settings entrypoint, open Fine-tune popover.
+if (wantFine) {
+  // Defer until panel mounted so triggerBtn has a bounding rect.
+  setTimeout(() => openFineTunePopover(fineTriggerBtn), 0);
+}
+
+// ---- Toolbar button (matches Paper Mode pattern) -------------------------------------
+// Injects a pen icon into Excalidraw's .App-toolbar that toggles the
+// Pen Styles panel. MutationObserver re-injects on Excalidraw toolbar
+// re-render. data-state="open" gives full primary highlight while panel
+// is visible.
+(function installPenStylesToolbar() {
+  const BTN_ID    = "pen-styles-toolbar-btn";
+  const WRAP_ID   = "pen-styles-toolbar-wrap";
+  const DIV_ID    = "pen-styles-toolbar-divider";
+  const STYLE_ID2 = "pen-styles-toolbar-style";
+
+  if (!document.getElementById(STYLE_ID2)) {
+    const s = document.createElement("style");
+    s.id = STYLE_ID2;
+    s.textContent = `
+      #${BTN_ID}[data-state="open"] {
+        background: var(--color-primary, var(--interactive-accent)) !important;
+      }
+      #${BTN_ID}[data-state="open"] svg { stroke: var(--color-on-primary, white) !important; }
+    `;
+    document.head.appendChild(s);
+  }
+
+  const syncBtn = (btn) => {
+    const p = document.getElementById(PANEL_ID);
+    const visible = !!p;
+    btn.setAttribute("data-state", visible ? "open" : "closed");
+    btn.setAttribute("aria-expanded", visible ? "true" : "false");
+  };
+
+  const inject = () => {
+    const toolbar = view.contentEl.querySelector(".App-toolbar");
+    if (!toolbar) return;
+    if (toolbar.querySelector("#" + WRAP_ID)) return;
+    const wrap = document.createElement("div");
+    wrap.id = WRAP_ID;
+    wrap.className = "dropdown-menu-container";
+    wrap.style.display = "contents";
+    const btn = document.createElement("button");
+    btn.id = BTN_ID;
+    btn.type = "button";
+    btn.className = "dropdown-menu-button App-toolbar__extra-tools-trigger zen-mode-transition";
+    btn.title = "Pen Styles";
+    btn.setAttribute("aria-label", "Pen Styles");
+    btn.innerHTML = `<svg aria-hidden="true" focusable="false" role="img" viewBox="0 0 24 24" fill="none" stroke="var(--icon-fill-color)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="12" rx="1.5"/><line x1="4" y1="10" x2="20" y2="10"/><polygon points="8,10 8,3 10,3 10,10"/><line x1="9" y1="5" x2="9" y2="3"/><polygon points="12.5,10 12.5,4 15.5,4 15.5,10"/><line x1="14" y1="4" x2="14" y2="2"/><polygon points="17,10 17,6 19,6 19,10"/></svg>`;
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const p = document.getElementById(PANEL_ID);
+      if (p) {
+        // Open → close: fully remove.
+        if (typeof window.closePenSidePanel === "function") window.closePenSidePanel();
+        else p.remove();
+      } else {
+        // Closed → open: re-run the script to rebuild the panel.
+        if (typeof window.openPenSidePanel === "function") window.openPenSidePanel();
+        applyActivePen?.();
+      }
+      syncBtn(btn);
+    });
+    wrap.appendChild(btn);
+    toolbar.appendChild(wrap);
+    syncBtn(btn);
+  };
+
+  inject();
+  const prior = view._penStylesToolbar;
+  if (prior?.cleanup) prior.cleanup();
+  const mo = new MutationObserver(() => {
+    inject();
+    const btn = view.contentEl.querySelector("#" + BTN_ID);
+    if (btn) syncBtn(btn);
+  });
+  mo.observe(view.contentEl, { childList: true, subtree: true });
+  view._penStylesToolbar = {
+    cleanup: () => {
+      try { mo.disconnect(); } catch (_) {}
+      view.contentEl.querySelector("#" + WRAP_ID)?.remove();
+      view.contentEl.querySelector("#" + DIV_ID)?.remove();
+      view._penStylesToolbar = null;
+    }
+  };
+})();
+
+// ---- Esc closes panel ----------------------------------------------------------------
+if (window.__penStylesEscHandler) {
+  document.removeEventListener("keydown", window.__penStylesEscHandler, true);
+}
+window.__penStylesEscHandler = (e) => {
+  if (e.key !== "Escape") return;
+  // Panel may have been .remove()'d by closePenSidePanel — re-resolve.
+  if (!document.getElementById(PANEL_ID)) return;
+  closePenSidePanel();
+};
+document.addEventListener("keydown", window.__penStylesEscHandler, true);
 
 // ---- Auto-apply on first open --------------------------------------------------------
-applyActivePen();
+const _isPenStylesAutoStartup = !!window.__penStylesAutoStartup;
+if (!_isPenStylesAutoStartup) {
+  openPenSidePanel();
+  applyActivePen();
+} else {
+  // Auto-startup: fully remove panel + side wrap so no ghost empty box
+  // shows. Toolbar button rebuilds via re-run; toolbar inject persists.
+  closePenSidePanel();
+}
 /*
 ```
 */

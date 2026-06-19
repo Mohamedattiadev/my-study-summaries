@@ -73,13 +73,13 @@ if (!document.getElementById(STYLE_ID)) {
   s.id = STYLE_ID;
   s.textContent = `
     .excali-minimap {
-      position: fixed; right: 14px; bottom: 38px;   /* sit above Obsidian status bar */
+      position: absolute; right: 14px; bottom: 14px;
       width: ${MAP_W}px;
       background: var(--background-primary);
       border: 1px solid var(--background-modifier-border);
       border-radius: 10px;
       box-shadow: 0 6px 18px rgba(0,0,0,0.32);
-      z-index: 999;
+      z-index: 50;
       font-family: var(--font-interface);
       font-size: 11px;
       user-select: none;
@@ -126,10 +126,25 @@ if (!document.getElementById(STYLE_ID)) {
   document.head.appendChild(s);
 }
 
+// ---------- modal-aware auto-hide (shared across all script panels) ----------
+if (!window.__excaliPanelSuppressInstalled) {
+  window.__excaliPanelSuppressInstalled = true;
+  const _s = document.createElement("style");
+  _s.id = "excali-panel-suppress-style";
+  _s.textContent = `body.excali-modal-open .excali-floating-panel { display: none !important; }`;
+  document.head.appendChild(_s);
+  const _update = () => {
+    const open = !!document.querySelector("body > .modal-container, body > .suggestion-container, body > .prompt");
+    document.body.classList.toggle("excali-modal-open", open);
+  };
+  new MutationObserver(_update).observe(document.body, { childList: true });
+  _update();
+}
+
 // ---------- panel DOM ----------
 const panel = document.createElement("div");
 panel.id = PANEL_ID;
-panel.className = "excali-minimap";
+panel.className = "excali-minimap excali-floating-panel";
 panel.innerHTML = `
   <div class="mm-header">
     <span class="mm-title">
@@ -151,22 +166,28 @@ const canvas = document.createElement("canvas");
 canvas.width = MAP_W - 12;
 canvas.height = MAP_H;
 panel.querySelector(".mm-canvas-wrap").appendChild(canvas);
-document.body.appendChild(panel);
+const _panelHost =
+  view.contentEl.querySelector(".excalidraw") || view.contentEl;
+if (_panelHost && getComputedStyle(_panelHost).position === "static") {
+  _panelHost.style.position = "relative";
+}
+_panelHost.appendChild(panel);
 
 panel.querySelector(".mm-close").onclick = () => { panel.style.display = "none"; };
 function clampPanel() {
-  const r = panel.getBoundingClientRect();
-  const vh = window.innerHeight, vw = window.innerWidth, m = 8;
-  if (r.bottom > vh - m) {
-    panel.style.top = `${Math.max(m, vh - m - r.height)}px`;
+  const hr = _panelHost.getBoundingClientRect();
+  const w = panel.offsetWidth, h = panel.offsetHeight, m = 8;
+  const cl = panel.offsetLeft, ct = panel.offsetTop;
+  if (ct + h > hr.height - m) {
+    panel.style.top = `${Math.max(m, hr.height - m - h)}px`;
     panel.style.bottom = "auto";
   }
-  if (r.right > vw - m) {
-    panel.style.left = `${Math.max(m, vw - m - r.width)}px`;
+  if (cl + w > hr.width - m) {
+    panel.style.left = `${Math.max(m, hr.width - m - w)}px`;
     panel.style.right = "auto";
   }
-  if (r.top < m) panel.style.top = `${m}px`;
-  if (r.left < m) panel.style.left = `${m}px`;
+  if (ct < m) panel.style.top = `${m}px`;
+  if (cl < m) panel.style.left = `${m}px`;
 }
 panel.querySelector(".mm-header").addEventListener("dblclick", (e) => {
   if (e.target.closest(".mm-actions")) return;
@@ -194,9 +215,10 @@ const zoomEl  = panel.querySelector(".mm-zoom");
   });
   window.addEventListener("mousemove", (e) => {
     if (!dragging) return;
+    const hr = _panelHost.getBoundingClientRect();
     const w = panel.offsetWidth, h = panel.offsetHeight, m = 8;
-    const left = Math.max(m, Math.min(window.innerWidth  - w - m, e.clientX - ox));
-    const top  = Math.max(m, Math.min(window.innerHeight - h - m, e.clientY - oy));
+    const left = Math.max(m, Math.min(hr.width  - w - m, e.clientX - hr.left - ox));
+    const top  = Math.max(m, Math.min(hr.height - h - m, e.clientY - hr.top  - oy));
     panel.style.left = `${left}px`;
     panel.style.top  = `${top}px`;
     panel.style.right = "auto"; panel.style.bottom = "auto";

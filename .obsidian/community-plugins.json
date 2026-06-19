@@ -2,8 +2,9 @@
   "templater-obsidian",
   "slide-remote",
   "obsidian-livesync",
-  "video-share",
   "excalidraw-zoom-wide",
   "obsidian-icon-folder",
-  "obsidian-excalidraw-plugin"
+  "obsidian-excalidraw-plugin",
+  "ribbon-controls",
+  "video-share"
 ]

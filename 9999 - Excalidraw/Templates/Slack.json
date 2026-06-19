@@ -1,6 +1,6 @@
 [
   {
-    "id": "518db39bf5b84328951a",
+    "id": "4528faecd97c42c6a848",
     "type": "rectangle",
     "x": 30,
     "y": 0,
@@ -19,18 +19,18 @@
     "roundness": {
       "type": 3
     },
-    "seed": 1543369164,
+    "seed": 204788141,
     "version": 1,
-    "versionNonce": 47837661,
+    "versionNonce": 1030977430,
     "isDeleted": false,
     "boundElements": null,
-    "updated": 1780616719605,
+    "updated": 1781651651133,
     "link": null,
     "locked": false,
     "customData": null
   },
   {
-    "id": "ac4d522d4b3a467faaf6",
+    "id": "2f49b0efdbbe4b82a158",
     "type": "rectangle",
     "x": 55,
     "y": 25,
@@ -49,18 +49,18 @@
     "roundness": {
       "type": 3
     },
-    "seed": 2068058436,
+    "seed": 1402220485,
     "version": 1,
-    "versionNonce": 1847677999,
+    "versionNonce": 128278994,
     "isDeleted": false,
     "boundElements": null,
-    "updated": 1780616719606,
+    "updated": 1781651651133,
     "link": null,
     "locked": false,
     "customData": null
   },
   {
-    "id": "a85eac44e0c846f3bf68",
+    "id": "5298fa21685d42fd8315",
     "type": "rectangle",
     "x": 0,
     "y": 30,
@@ -79,18 +79,18 @@
     "roundness": {
       "type": 3
     },
-    "seed": 882073667,
+    "seed": 1528665118,
     "version": 1,
-    "versionNonce": 648002808,
+    "versionNonce": 1810372206,
     "isDeleted": false,
     "boundElements": null,
-    "updated": 1780616719606,
+    "updated": 1781651651133,
     "link": null,
     "locked": false,
     "customData": null
   },
   {
-    "id": "ef1d050c4e214be182aa",
+    "id": "d45c747d8e354cd39da9",
     "type": "rectangle",
     "x": 25,
     "y": 55,
@@ -109,18 +109,18 @@
     "roundness": {
       "type": 3
     },
-    "seed": 675161460,
+    "seed": 1005404438,
     "version": 1,
-    "versionNonce": 1831680711,
+    "versionNonce": 377552013,
     "isDeleted": false,
     "boundElements": null,
-    "updated": 1780616719606,
+    "updated": 1781651651133,
     "link": null,
     "locked": false,
     "customData": null
   },
   {
-    "id": "1eabadb7651b44f59cc5",
+    "id": "c072e3b348e9459b9af5",
     "type": "text",
     "x": 0,
     "y": 85,
@@ -137,12 +137,12 @@
     "groupIds": [],
     "frameId": null,
     "roundness": null,
-    "seed": 610567874,
+    "seed": 132728405,
     "version": 1,
-    "versionNonce": 206511498,
+    "versionNonce": 617754475,
     "isDeleted": false,
     "boundElements": null,
-    "updated": 1780616719606,
+    "updated": 1781651651133,
     "link": null,
     "locked": false,
     "customData": null,

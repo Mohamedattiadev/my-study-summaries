@@ -15,7 +15,29 @@ const RECOMMENDED_PINS = [
   `${SCRIPT_FOLDER}/Excalidraw Collaboration Frame.md`,
   `${SCRIPT_FOLDER}/Paper Mode.md`,
   `${SCRIPT_FOLDER}/Zoom Box.md`,
+  `${SCRIPT_FOLDER}/Shape Templates.md`,
 ];
+
+// Inject global CSS hide rules for native Excalidraw toolbar entries we
+// don't use, plus mobile-misc-tools duplicates of scripts already pinned to
+// the top App-toolbar. Idempotent: skips if style tag already present.
+const HIDE_STYLE_ID = "excalidraw-bootstrap-hide-style";
+if (!document.getElementById(HIDE_STYLE_ID)) {
+  const _hs = document.createElement("style");
+  _hs.id = HIDE_STYLE_ID;
+  _hs.textContent = `
+    /* Top App-toolbar: hide native Diamond shape + Image/Files dropdown. */
+    .excalidraw .App-toolbar label.ToolIcon.Shape:has(input[data-testid="toolbar-diamond"]) { display: none !important; }
+    .excalidraw .App-toolbar button[data-testid="dropdown-menu-button"][title="Image & Files"] { display: none !important; }
+    /* Mobile-misc-tools-container: hide Pen Styles + Paper Mode duplicates
+       (scripts already inject their own buttons into the top toolbar). */
+    .excalidraw .mobile-misc-tools-container label:has([aria-label="Pen Styles"]),
+    .excalidraw .mobile-misc-tools-container label:has([aria-label="Paper Mode"]) {
+      display: none !important;
+    }
+  `;
+  document.head.appendChild(_hs);
+}
 
 const PLUGIN_DIR  = ".obsidian/plugins/obsidian-excalidraw-plugin";
 const DATA_PATH   = `${PLUGIN_DIR}/data.json`;
@@ -32,11 +54,18 @@ try {
 
 let mutated = false;
 
-// Pin list — set only if empty or missing entirely. Don't clobber a custom
-// list the user already curated.
-if (!Array.isArray(data.pinnedScripts) || data.pinnedScripts.length === 0) {
+// Pin list — append any recommended pins missing from user's current list.
+// Preserves user-curated order; just fills in gaps.
+if (!Array.isArray(data.pinnedScripts)) {
   data.pinnedScripts = RECOMMENDED_PINS.slice();
   mutated = true;
+} else {
+  for (const p of RECOMMENDED_PINS) {
+    if (!data.pinnedScripts.includes(p)) {
+      data.pinnedScripts.push(p);
+      mutated = true;
+    }
+  }
 }
 
 // Script folder path — set only if unset / pointing to old "Excalidraw/Scripts".
